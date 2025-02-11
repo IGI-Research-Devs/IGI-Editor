@@ -2023,6 +2023,8 @@ namespace IGIEditor
 
         internal static bool HasBinaryContent(this string content)
         {
+            if (string.IsNullOrEmpty(content))
+                return false;
             return content.Any(ch => char.IsControl(ch) && ch != '\r' && ch != '\n');
         }
 

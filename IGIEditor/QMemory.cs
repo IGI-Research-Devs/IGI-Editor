@@ -49,7 +49,7 @@ namespace IGIEditor
             {
                 IntPtr levelAddr = (IntPtr)0x00539560;
                 long level = GT.GT_ReadInt(levelAddr);
-                if (level > QUtils.GAME_MAX_LEVEL) QUtils.ShowSystemFatalError("IGI Editor demo is limited to " + QUtils.GAME_MAX_LEVEL + " levels only.");
+                if (level > QUtils.GAME_MAX_LEVEL) QUtils.ShowSystemFatalError("IGI Editor is limited to " + QUtils.GAME_MAX_LEVEL + " levels only.");
                 return (int)level;
             }
             catch (Exception ex) { return -1; }
