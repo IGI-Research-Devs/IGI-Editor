@@ -436,12 +436,16 @@ namespace IGIEditor
                 var graphIdList = QUtils.aiGraphIdStr;
                 var qscData = QUtils.LoadFile();
                 int graphWorkTotal = graphIdList.Count, graphWorkCount = 1, graphWorkPercent = 1;
+				int level = QUtils.gGameLevel;
+
+				if (level <= 0 || level > QUtils.GAME_MAX_LEVEL)
+				    level = QMemory.GetRunningLevel();
 
                 if (graphsAllCb.Checked)
                 {
                     foreach (var graphId in graphIdList)
                     {
-                        var graphNodes = QGraphs.GetNodesForGraph(graphId);
+                        var graphNodes = QGraphs.GetNodesForGraph(graphId, level);
                         if (graphNodes.Count <= 300)
                         {
                             var graphPos = QGraphs.GetGraphPosition(graphId);
@@ -2538,14 +2542,22 @@ namespace IGIEditor
                 QUtils.gGameLevel = QUtils.gameFound ? QMemory.GetRunningLevel() : Convert.ToInt32(levelStartTxt.Value);
                 graphIdDD.SelectedIndex = (graphIdDD.SelectedIndex == -1) ? 0 : graphIdDD.SelectedIndex;
                 aiGraphId = QUtils.aiGraphIdStr[graphIdDD.SelectedIndex];
+				QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "GraphId : " + aiGraphId + ",Level: " + QUtils.gGameLevel);
 
                 SetStatusText("Updating GraphNodes data please wait....");
+
+				int level = QUtils.gGameLevel;
+
+				if (level <= 0 || level > QUtils.GAME_MAX_LEVEL)
+				    level = QMemory.GetRunningLevel();
+
+				QUtils.AddLog(MethodBase.GetCurrentMethod().Name," Previous level: " + QUtils.gGameLevel + ", Current Level: " + level);
 
                 // Extract Nodes Data from Graph file.
                 if (QUtils.gameFound)
                 {
                     graphPos = QGraphs.GetGraphPosition(aiGraphId, QUtils.gGameLevel);
-                    aiGraphNodeIdStr = QGraphs.GetNodesForGraph(aiGraphId);
+                    aiGraphNodeIdStr = QGraphs.GetNodesForGraph(aiGraphId, level);
                     graphTotalNodes = aiGraphNodeIdStr.Count;
                     graphTotalNodesTxt.Text = graphTotalNodes.ToString();
                     SetStatusText("Updating GraphNodes data done....");
@@ -4834,7 +4846,7 @@ namespace IGIEditor
                     QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"selectedPath: {textureSelectedPath}");
                     string outputPath = null;
 
-                    if (folderBrowser.FileName.contains(".res"))
+                    if (folderBrowser.FileName.Contains(".res"))
                     {
                         QUtils.ShowWarning("Resource file needs to be unpacked first.");
                         UnpackResourceFile(folderBrowser.FileName);

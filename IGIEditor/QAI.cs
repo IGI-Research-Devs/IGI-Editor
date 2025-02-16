@@ -272,7 +272,7 @@ namespace IGIEditor
 
                         bool graphExist = false;
                         //var nodesList = QGraphs.GetAllNodes4mGraph(Convert.ToInt32(graphId));//Slow One Old method.
-                        var nodesList = QGraphs.GetNodesForGraph(graphId);
+                        var nodesList = QGraphs.GetNodesForGraph(graphId, level);
 
                         if (aiPathData.Contains("xxxx"))
                         {
