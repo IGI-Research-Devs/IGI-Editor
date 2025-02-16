@@ -92,8 +92,8 @@ namespace IGIEditor
                 updatePositionTimer.Interval = 500;
 
                 //Start File Integrity timer.
-                fileIntegrityCheckerTimer.Tick += new EventHandler(FileIntegrityCheckerTimer);
-                fileIntegrityCheckerTimer.Interval = 60000;//1 Minute.
+                //fileIntegrityCheckerTimer.Tick += new EventHandler(FileIntegrityCheckerTimer);
+                //fileIntegrityCheckerTimer.Interval = 60000;//1 Minute.
 
                 //Internals Attach/Detach timer.
                 internalsAttachTimer.Tick += new EventHandler(InternalsAttachedTimer);
