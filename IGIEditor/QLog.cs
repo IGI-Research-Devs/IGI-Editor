@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
 namespace IGIEditor
@@ -40,15 +41,38 @@ namespace IGIEditor
             DialogMsgBox.ShowBox(caption, errMsg, MsgBoxButtons.Ok);
         }
 
+        private static string FormatException(Exception ex)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Exception Details:");
+            sb.AppendLine($"Message: {ex.Message}");
+            sb.AppendLine($"Source: {ex.Source}");
+            sb.AppendLine($"StackTrace: {ex.StackTrace}");
+            
+            if (ex.InnerException != null)
+            {
+                sb.AppendLine("Inner Exception:");
+                sb.AppendLine($"Message: {ex.InnerException.Message}");
+                sb.AppendLine($"StackTrace: {ex.InnerException.StackTrace}");
+            }
+            
+            return sb.ToString();
+        }
+
         internal static void LogException(string methodName, Exception ex)
         {
-            methodName = methodName.Replace("Btn_Click", String.Empty).Replace("_SelectedIndexChanged", String.Empty).Replace("_SelectedValueChanged", String.Empty);
-            AddLog(methodName, "Exception MESSAGE: " + ex.Message + "\nREASON: " + ex.StackTrace, DEBUG_TYPE.Error);
+            methodName = methodName.Replace("Btn_Click", String.Empty)
+                                 .Replace("_SelectedIndexChanged", String.Empty)
+                                 .Replace("_SelectedValueChanged", String.Empty);
+            
+            string formattedError = FormatException(ex);
+            AddLog(methodName, formattedError, DEBUG_TYPE.Error);
         }
 
         internal static void ShowException(string methodName, Exception ex)
         {
-            ShowError("MESSAGE: " + ex.Message + "\nREASON: " + ex.StackTrace, methodName + " Exception");
+            string formattedError = FormatException(ex);
+            ShowError(formattedError, $"{methodName} Exception - {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
         }
 
         internal static void ShowLogException(string methodName, Exception ex)
