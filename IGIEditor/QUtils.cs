@@ -1735,11 +1735,6 @@ namespace IGIEditor
                     continue;
 
                 // discard virtual cards (virtual box, virtual pc, etc.)
-                // I use 10000000 as a minimum speed for most cases
-                if (ni.Speed < minimumSpeed)
-                    continue;
-
-                // discard virtual cards (virtual box, virtual pc, etc.)
                 if ((ni.Description.IndexOf("virtual", StringComparison.OrdinalIgnoreCase) >= 0) ||
                     (ni.Name.IndexOf("virtual", StringComparison.OrdinalIgnoreCase) >= 0))
                     continue;

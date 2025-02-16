@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using System.Windows.Forms;
-using UXLib.UX;
+using QUxLib.UX;
 using static IGIEditor.QUtils;
 using static IGIEditor.QServer;
 using static System.Drawing.Color;

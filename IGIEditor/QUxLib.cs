@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
-namespace UXLib
+namespace QUxLib
 {
     namespace UX
     {
