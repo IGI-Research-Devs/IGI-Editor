@@ -1,5 +1,13 @@
 # 📝 CHANGELOGS
 
+## Version 0.8.5.2 BETA 🎉
+- 🔧 Improved Logger.
+- 🗑 Remove unnecessary libraries.
+- 🧹 Clean up structure of IGIEditor.
+- 🐛 Bug fix for Graphs loading on Level start.
+
+---
+
 ## Version 0.8.5.1 BETA 🎯
 - 🔄 **Updated Editor** - Removed File Integrity Checker.
 - 🎯 **Fixed Minimum Frames setting**.

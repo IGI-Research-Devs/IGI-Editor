@@ -138,7 +138,7 @@ And now you can generate Key from KeyGen for your editor for free.</br>~~
 [![QEditor](https://img.youtube.com/vi/wMyAlgIm2AY/0.jpg)](https://www.youtube.com/watch?v=wMyAlgIm2AY)
 
 ## Version Update:
-**Editor version 0.8.5.1 Latest.**
+**Editor version 0.8.5.2 Latest.**
 
 # Chagelogs:
 Check out the detailed version history in [Changelogs.md](CHANGELOGS.md)
