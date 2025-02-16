@@ -1067,16 +1067,21 @@ namespace IGIEditor
         }
 
 
-        private void InitEditorPaths(int gameLevel)
+        private void InitEditorPaths(int level)
         {
             try
             {
-                QUtils.gamePath = QUtils.cfgGamePath + gameLevel;
-                inputQvmPath = QUtils.cfgQvmPath + gameLevel + "\\" + QUtils.objectsQvm;
-                inputQscPath = QUtils.cfgQscPath + gameLevel + "\\" + QUtils.objectsQsc;
-                QUtils.graphsPath = QUtils.cfgGamePath + gameLevel + "\\" + "graphs";
-                QUtils.gGameLevel = gameLevel;
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "level: " + gameLevel + " Game Path: '" + gamePath + "' QvmPath: '" + inputQvmPath + "' QscPath: '" + inputQscPath + "' Graphs Path: '" + graphsPath + "'");
+                if (level <= 0)
+                {
+                    QUtils.AddLog("IGIEditorUI.InitEditorPaths", $"Invalid level [{level}] received, defaulting to 1");
+                    level = 1;
+                }
+                QUtils.gamePath = QUtils.cfgGamePath + level;
+                inputQvmPath = QUtils.cfgQvmPath + level + "\\" + QUtils.objectsQvm;
+                inputQscPath = QUtils.cfgQscPath + level + "\\" + QUtils.objectsQsc;
+                QUtils.graphsPath = QUtils.cfgGamePath + level + "\\" + "graphs";
+                QUtils.gGameLevel = level;
+                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "level: " + level + " Game Path: '" + gamePath + "' QvmPath: '" + inputQvmPath + "' QscPath: '" + inputQscPath + "' Graphs Path: '" + graphsPath + "'");
             }
             catch (Exception ex)
             {
@@ -4829,7 +4834,7 @@ namespace IGIEditor
                     QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"selectedPath: {textureSelectedPath}");
                     string outputPath = null;
 
-                    if (folderBrowser.FileName.Contains(".res"))
+                    if (folderBrowser.FileName.contains(".res"))
                     {
                         QUtils.ShowWarning("Resource file needs to be unpacked first.");
                         UnpackResourceFile(folderBrowser.FileName);
@@ -5302,6 +5307,11 @@ namespace IGIEditor
         {
             try
             {
+                if (level <= 0)
+                {
+                    QUtils.AddLog("IGIEditorUI.StartLevel", $"Invalid level [{level}] received, defaulting to 1");
+                    level = 1;
+                }
                 //Reset only if checked.
                 if (QUtils.gameReset || autoResetCb.Checked)
                 {
@@ -5354,12 +5364,6 @@ namespace IGIEditor
                 itemDD.DataSource = null;
                 itemDD.Items.Clear();
                 itemDD.DataSource = dataSrcList;
-                //itemDD.Invoke(new Action(() => itemDD.DataSource = dataSrcList));
-                //itemDD.Invoke((MethodInvoker)delegate
-                //{
-                //    // Running on the UI thread
-                //    itemDD.DataSource = dataSrcList;
-                //});
                 itemDD.Invalidate();
                 itemDD.Update();
                 itemDD.Refresh();

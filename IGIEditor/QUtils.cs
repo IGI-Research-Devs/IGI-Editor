@@ -1350,14 +1350,26 @@ namespace IGIEditor
 
         internal static void ResetCurrentLevel(bool restartLevel = false, bool savePosition = false)
         {
-            int level = QMemory.GetRunningLevel();
-            if (level <= 0 || level > GAME_MAX_LEVEL) level = 1;
-            QUtils.RestoreLevel(level);
-            QUtils.ResetScriptFile(level);
-            if (restartLevel)
-                QMemory.RestartLevel(savePosition);
-            CleanUpAiFiles();
-            IGIEditorUI.editorRef.GenerateAIScriptId(true);
+            try
+            {
+                if (gGameLevel <= 0)
+                {
+                    AddLog("QUtils.ResetCurrentLevel", $"Invalid gGameLevel [{gGameLevel}] detected, defaulting to 1");
+                    gGameLevel = 1;
+                }
+                int level = QMemory.GetRunningLevel();
+                if (level <= 0 || level > GAME_MAX_LEVEL) level = 1;
+                QUtils.RestoreLevel(level);
+                QUtils.ResetScriptFile(level);
+                if (restartLevel)
+                    QMemory.RestartLevel(savePosition);
+                CleanUpAiFiles();
+                IGIEditorUI.editorRef.GenerateAIScriptId(true);
+            }
+            catch (Exception ex)
+            {
+                LogException("QUtils.ResetCurrentLevel", ex);
+            }
         }
 
         internal static void SaveFile(string data = null, bool appendData = false)
@@ -1718,6 +1730,11 @@ namespace IGIEditor
                     continue;
 
                 // this allow to filter modems, serial, etc.
+                // I use 10000000 as a minimum speed for most cases
+                if (ni.Speed < minimumSpeed)
+                    continue;
+
+                // discard virtual cards (virtual box, virtual pc, etc.)
                 // I use 10000000 as a minimum speed for most cases
                 if (ni.Speed < minimumSpeed)
                     continue;
