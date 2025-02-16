@@ -1737,6 +1737,7 @@ namespace IGIEditor
 
         private void exportObjectsBtn_Click(object sender, EventArgs e)
         {
+			try{
             var qtaskList = QTask.GetQTaskList(false, true);
 
             switch (exportObjectsDD.SelectedIndex)
@@ -1752,6 +1753,11 @@ namespace IGIEditor
                     break;
             }
             SetStatusText("Data exported success");
+			}
+			catch (Exception ex)
+			{
+				QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
+			}
         }
 
         private void objectSelectDD_Click(object sender, EventArgs e)
