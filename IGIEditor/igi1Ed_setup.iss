@@ -20,14 +20,14 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\LICENCE.txt
-InfoBeforeFile=F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\README.txt
-InfoAfterFile=F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\CHANGELOGS.txt
+LicenseFile=F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\LICENCE.txt
+InfoBeforeFile=F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\README.txt
+InfoAfterFile=F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\CHANGELOGS.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=C:\Users\haseeb_mir\Documents\IGIEditor_Setup
 OutputBaseFilename=IGI1Editor_Setup_x86
-SetupIconFile=F:\IGI1Editor\IGIEditor\app_icon.ico
+SetupIconFile=F:\IGIEditor\IGIEditor\app_icon.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -45,23 +45,23 @@ Name: "turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\bin\IGI-Injector.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\bin\IGI-Injector-GT.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\bin\IGI-Internals-Dbg.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\bin\IGI-Internals-Rls.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\bin\IGIModels.txt"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\bin\IGINatives.json"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\lib\GTLibc_x86.so"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\DeviceId.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\IGIEditor_x86.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\DeviceId.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\LICENCE.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\Newtonsoft.Json.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\README.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\AppImages\*"; DestDir: "{%TEMP}\IGIEditorCache\AppImages"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "F:\IGI1Editor\bin\x86\IGIEditor_v0.3_NEW\QEditor\*"; DestDir: "{userappdata}\QEditor"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\bin\IGI-Injector.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\bin\IGI-Injector-GT.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\bin\IGI-Internals-Dbg.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\bin\IGI-Internals-Rls.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\bin\IGIModels.txt"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\bin\IGINatives.json"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\lib\GTLibc_x86.so"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\DeviceId.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\IGIEditor_x86.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\DeviceId.xml"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\LICENCE.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\Newtonsoft.Json.xml"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\README.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\AppImages\*"; DestDir: "{%TEMP}\IGIEditorCache\AppImages"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "F:\IGIEditor\bin\x86\IGIEditor_v0.3_NEW\QEditor\*"; DestDir: "{userappdata}\QEditor"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
