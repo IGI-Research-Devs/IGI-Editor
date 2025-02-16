@@ -40,7 +40,7 @@ namespace IGIEditor
         private static FOpenIO fopenIO;
         private string[] texFiles;
         private int texIndex = 0;
-        private string textureSelectedPath = null; // Remove ! suffix since nullable not supported
+        private string textureSelectedPath = null;
         #endregion
 
         #region timers
@@ -57,7 +57,6 @@ namespace IGIEditor
             try
             {
                 var updatePositionTimer = new Timer();
-                // var fileIntegrityCheckerTimer = new Timer();
 
                 InitializeComponent();
                 UXWorker formMover = new UXWorker();
@@ -91,10 +90,6 @@ namespace IGIEditor
                 //Start Position timer.
                 updatePositionTimer.Tick += new EventHandler(UpdatePositionTimer);
                 updatePositionTimer.Interval = 500;
-
-                //Start File Integrity timer.
-                //fileIntegrityCheckerTimer.Tick += new EventHandler(FileIntegrityCheckerTimer);
-                //fileIntegrityCheckerTimer.Interval = 60000;//1 Minute.
 
                 //Internals Attach/Detach timer.
                 internalsAttachTimer.Tick += new EventHandler(InternalsAttachedTimer);
@@ -226,7 +221,6 @@ namespace IGIEditor
 #else
                     if (enable)
                     {
-                        // fileIntegrityCheckerTimer.Start();
                         updatePositionTimer.Start();
                         if (QUtils.gameRefresh)
                         {
@@ -3699,9 +3693,11 @@ namespace IGIEditor
         {
             var framesTxt = ((NumericUpDown)sender).Value.ToString();
             int frame = gameFPS = Convert.ToInt32(framesTxt);
-            //Check for Max Level.
-            if (frame <= 0 || frame > MAX_FPS)
+            
+			//Check for Max FPS.
+            if (frame < MIN_FPS || frame > MAX_FPS)
             {
+				QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Frames value is out of range.");
                 ((NumericUpDown)sender).Value = frame = gameFPS = 30;
             }
         }

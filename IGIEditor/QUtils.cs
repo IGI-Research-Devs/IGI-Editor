@@ -16,12 +16,11 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-// Use the fully qualified name for QServer
 using static IGIEditor.QServer;
 using File = System.IO.File;
 using FileIO = Microsoft.VisualBasic.FileIO;
 using FileSystem = Microsoft.VisualBasic.FileIO.FileSystem;
-using System.Runtime.InteropServices; // Add this for shortcut creation
+using System.Runtime.InteropServices;
 
 namespace IGIEditor
 {
@@ -292,6 +291,7 @@ namespace IGIEditor
         internal const int TEAM_ID_FRIENDLY = 0;
         internal const int TEAM_ID_ENEMY = 1;
         internal const int MAX_AI_COUNT = 100;
+		internal const int MIN_FPS = 10;
         internal const int MAX_FPS = 240;
         internal const int MAX_UPDATE_TIME = 120;
         internal const int MAX_HUMAN_CAM = 5;

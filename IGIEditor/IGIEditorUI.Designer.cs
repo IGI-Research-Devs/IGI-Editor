@@ -5336,7 +5336,7 @@
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "IGIEditorUI";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Project IGI 1 Editor";
+            this.Text = "Project IGI Editor";
             this.editorMainPanel.ResumeLayout(false);
             this.editorMainPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.levelStartTxt)).EndInit();
