@@ -165,8 +165,8 @@ namespace IGIEditor
 
         private static string LoadWeaponsConfig()
         {
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "weaponsConfigIn : " + weaponsConfigIn);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "weaponsConfigOut : " + weaponsConfigOut);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "weaponsConfigIn : " + weaponsConfigIn);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "weaponsConfigOut : " + weaponsConfigOut);
             return QUtils.LoadFile(weaponsConfigIn);
         }
 
@@ -177,7 +177,7 @@ namespace IGIEditor
             qscData = qscData.Replace("\t", String.Empty);
             var qscDataSplit = qscData.Split(new string[] { QUtils.taskNew }, StringSplitOptions.None);
 
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "started parsing.");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "started parsing.");
 
             var weaponList = new List<Weapon>();
             foreach (var data in qscDataSplit)
@@ -197,7 +197,7 @@ namespace IGIEditor
 
                         foreach (var task in taskNew)
                         {
-                            //QUtils.AddLog(MethodBase.GetCurrentMethod().Name, " taskName : " + taskName + " taskIndex " + taskIndex + " data  : " + task.Trim());
+                            //QLog.AddLog(MethodBase.GetCurrentMethod().Name, " taskName : " + taskName + " taskIndex " + taskIndex + " data  : " + task.Trim());
 
                             if (taskIndex == (int)WEAPONCFG.WEAPON_ID)
                                 weapon.weaponId = Convert.ToInt32(task.Trim());
@@ -364,7 +364,7 @@ namespace IGIEditor
                     }
                 }
             }
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "returned list with length :  " + weaponList.Count);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "returned list with length :  " + weaponList.Count);
             return weaponList;
         }
     }

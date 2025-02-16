@@ -38,7 +38,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return gameFound;
         }
@@ -49,7 +49,7 @@ namespace IGIEditor
             {
                 IntPtr levelAddr = (IntPtr)0x00539560;
                 long level = GT.GT_ReadInt(levelAddr);
-                if (level > QUtils.GAME_MAX_LEVEL) QUtils.ShowSystemFatalError("IGI Editor is limited to " + QUtils.GAME_MAX_LEVEL + " levels only.");
+                if (level > QUtils.GAME_MAX_LEVEL) QLog.ShowSystemFatalError("IGI Editor is limited to " + QUtils.GAME_MAX_LEVEL + " levels only.");
                 return (int)level;
             }
             catch (Exception ex) { return -1; }
@@ -89,11 +89,11 @@ namespace IGIEditor
                 humanBaseAddr = GT.GT_ReadPointerOffsets(humanBasePtr, humanAddrOffs, (uint)humanAddrOffs.Count() * sizeof(int));
 
                 if (addLog)
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "HumanBase Pointer 0x" + humanBasePtr + " Address  : 0x" + humanBaseAddr);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "HumanBase Pointer 0x" + humanBasePtr + " Address  : 0x" + humanBaseAddr);
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return humanBaseAddr;
         }
@@ -117,7 +117,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return statusMsgAddress;
         }
@@ -146,11 +146,11 @@ namespace IGIEditor
                 var angleAddrV = humanBaseAddress + 0xBF4;
 
                 angle = GT.GT_ReadFloat(angleAddrH);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Address : 0x" + angleAddrH.ToString() + " Value : " + angle);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Address : 0x" + angleAddrH.ToString() + " Value : " + angle);
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return angle;
         }
@@ -180,7 +180,7 @@ namespace IGIEditor
         {
             try
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Called with level: " + level + " windowed: " + windowed);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Called with level: " + level + " windowed: " + windowed);
                 if (level <= 0 || level > QUtils.GAME_MAX_LEVEL) throw new ArgumentNullException("Level must be between 1-" + QUtils.GAME_MAX_LEVEL);
 
                 var igiProc = Process.GetProcessesByName(gameName);
@@ -188,7 +188,7 @@ namespace IGIEditor
 
                 string igiLevelCmd = "start igi_" + (windowed ? "window" : "full") + ".lnk level" + level;
                 QUtils.shortcutExist = QUtils.CheckShortcutExist();
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, " Shortcut Exist: " + QUtils.shortcutExist);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, " Shortcut Exist: " + QUtils.shortcutExist);
 
                 if (QUtils.shortcutExist)
                 {
@@ -213,7 +213,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -238,7 +238,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
     }

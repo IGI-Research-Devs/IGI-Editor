@@ -19,29 +19,29 @@ namespace IGIEditor
             }
 
             string inputQscPath = cfgQscPath + level + "\\" + objectsQsc;
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with level : " + level + " fullList : " + fullQtaskList.ToString() + " distinct : " + distinct.ToString() + " backup : " + fromBackup);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with level : " + level + " fullList : " + fullQtaskList.ToString() + " distinct : " + distinct.ToString() + " backup : " + fromBackup);
             string qscData = fromBackup ? LoadFile(inputQscPath) : LoadFile();
 
             var qtaskList = fullQtaskList ? QObjects.ParseAllOjects(qscData) : QObjects.ParseObjects(qscData);
             if (distinct)
                 qtaskList = qtaskList.GroupBy(p => p.model).Select(g => g.First()).ToList();
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "returned list count: " + qtaskList.Count);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "returned list count: " + qtaskList.Count);
             return qtaskList;
         }
 
         internal static List<QScriptTask> GetQTaskList(int level, bool fullQtaskList = false, bool distinct = false, bool fromBackup = false)
         {
             string inputQscPath = cfgQscPath + level + "\\" + objectsQsc;
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, " Qsc Path: '" + inputQscPath + "' level : " + level + " full List : " + fullQtaskList.ToString() + " distinct : " + distinct.ToString() + " backup : " + fromBackup);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, " Qsc Path: '" + inputQscPath + "' level : " + level + " full List : " + fullQtaskList.ToString() + " distinct : " + distinct.ToString() + " backup : " + fromBackup);
             string qscData = fromBackup ? LoadFile(inputQscPath) : LoadFile();
 
             bool isBinary = qscData.HasBinaryContent();
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "isBinary: " + isBinary);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "isBinary: " + isBinary);
 
             var qtaskList = fullQtaskList ? QObjects.ParseAllOjects(qscData) : QObjects.ParseObjects(qscData);
             if (qtaskList.Count > 0)
                 if (distinct) qtaskList = qtaskList.GroupBy(p => p.model).Select(g => g.First()).ToList();
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "task List count " + qtaskList.Count);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "task List count " + qtaskList.Count);
             return qtaskList;
         }
 
@@ -56,7 +56,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return uniqueTaskId.ToString();
         }
@@ -66,11 +66,11 @@ namespace IGIEditor
             //Generating New Id for Duplicate QTaskId.
             if (QUtils.qIdsList.Contains(taskId))
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Duplicate TaskId: " + taskId + " Generating new TaskId");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Duplicate TaskId: " + taskId + " Generating new TaskId");
                 while (QUtils.qIdsList.Contains(taskId++)) ;
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Generated New TaskId: " + taskId);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Generated New TaskId: " + taskId);
             }
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Returned New TaskId: " + taskId);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Returned New TaskId: " + taskId);
             return taskId;
         }
 
@@ -78,10 +78,10 @@ namespace IGIEditor
         {
             try
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Method called with parameters: minimalId=" + minimalId + ", fromBackup=" + fromBackup + ", Level=" + QUtils.gGameLevel);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Method called with parameters: minimalId=" + minimalId + ", fromBackup=" + fromBackup + ", Level=" + QUtils.gGameLevel);
 
                 string inputQscPath = cfgQscPath + QUtils.gGameLevel + "\\" + objectsQsc;
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "inputQscPath: " + inputQscPath);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "inputQscPath: " + inputQscPath);
 
                 string qscData = fromBackup ? LoadFile(inputQscPath) : LoadFile();
                 qscData = qscData.Replace("\t", String.Empty);
@@ -104,13 +104,13 @@ namespace IGIEditor
                 int taskId = GetNextTaskId(qIdsList, minimalId);
 
                 taskId = GetUniqueQTaskId(taskId);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Unique task ID generated. Task ID: " + taskId);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Unique task ID generated. Task ID: " + taskId);
 
                 return taskId;
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
                 return 0;
             }
         }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using static IGIEditor.QUtils;
+using static IGIEditor.QLog;
 
 namespace IGIEditor
 {
@@ -19,7 +20,7 @@ namespace IGIEditor
 
                 if (!modelExist)
                 {
-                    QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "Model " + model + " does not exist in current level");
+                    QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "Model " + model + " does not exist in current level");
                     return null;
                 }
             }
@@ -34,8 +35,8 @@ namespace IGIEditor
 
                 if (!modelExist)
                 {
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Model " + model + " does not exist in current level");
-                    QUtils.ShowError("Model " + model + " does not exist in current level");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Model " + model + " does not exist in current level");
+                    QLog.ShowError("Model " + model + " does not exist in current level");
                 }
             }
             return RigidObj(-1, taskNote, position.x, position.y, position.z, orientation.alpha, orientation.beta, orientation.gamma, model);
@@ -48,21 +49,21 @@ namespace IGIEditor
                 modelId = modelId.Replace("\"", String.Empty);
 
             string qtaskRigidObj = "Task_New(" + QUtils.qtaskObjId + ",\"EditRigidObj\",\"" + taskNote + "\"," + x + "," + y + "," + z + "," + alpha + "," + beta + "," + gamma + ",\"" + modelId + "\"" + ",1" + ",1" + ",1" + ",0" + ",0" + ",0" + ");" + "\n";
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with ID : " + QUtils.qtaskObjId + "  RigidObj : '" + FindModelName(modelId) + "'\tX : " + x + " Y : " + y + " Z : " + z + "\tAlpha : " + alpha + " Beta : " + beta + ",Gamma : " + gamma + " Model : " + modelId + "\n");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with ID : " + QUtils.qtaskObjId + "  RigidObj : '" + FindModelName(modelId) + "'\tX : " + x + " Y : " + y + " Z : " + z + "\tAlpha : " + alpha + " Beta : " + beta + ",Gamma : " + gamma + " Model : " + modelId + "\n");
             return qtaskRigidObj;
         }
 
         internal static string ComputerMapHilight(int targetTaskId = -1, string taskNote = "", string taskTitle = "", string taskInfo = "", string markerType = "MARKER_NONE", string markerColor = "MARKER_COLOR_NONE", int taskId = -1)
         {
             string qtaskHilight = "Task_New(" + taskId + ",\"ComputerHilight\",\"" + taskNote + "\",24958512.0, -56097400.0, 174370800.0, \"1\"," + "\"" + targetTaskId + "\",\"\",\"" + markerType + "\"," + "\"" + markerColor + "\",\"" + taskTitle + "\"" + ",\"" + taskInfo + "\");" + "\n";
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with ID : " + taskId + "  ComputerHilight : ");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with ID : " + taskId + "  ComputerHilight : ");
             return qtaskHilight;
         }
 
         internal static string AddWire(Real64 startPos, Real64 endPos, string taskNote = "", int taskId = -1, string modelId = "320_01_1")
         {
             string qtaskWire = "Task_New(" + taskId + ",\"Wire\",\"" + taskNote + "\"," + startPos.x + "," + startPos.y + "," + startPos.z + "," + endPos.x + "," + endPos.y + "," + endPos.z + ",\"" + modelId + "\");" + "\n";
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with ID : " + taskId + " StartPos X: " + startPos.x + " " + " StartPos Y: " + startPos.y + " StartPos Z: " + startPos.z + " EndPos X: " + endPos.x + " EndPos Y: " + endPos.y + " EndPos Z: " + endPos.z);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with ID : " + taskId + " StartPos X: " + startPos.x + " " + " StartPos Y: " + startPos.y + " StartPos Z: " + startPos.z + " EndPos X: " + endPos.x + " EndPos Y: " + endPos.y + " EndPos Z: " + endPos.z);
             return qtaskWire;
         }
 
@@ -83,8 +84,8 @@ namespace IGIEditor
             int xLen = xVal ? xPos.ToString().Length : 0;
             int yLen = yVal ? yPos.ToString().Length : 0;
             int zLen = zVal ? zPos.ToString().Length : 0;
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "length : X:" + xLen + " Y: " + yLen + " Z: " + zLen);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with offset : X:" + position.x + " Y: " + position.y + " Z: " + position.z);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "length : X:" + xLen + " Y: " + yLen + " Z: " + zLen);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with offset : X:" + position.x + " Y: " + position.y + " Z: " + position.z);
 
 
             //Check for length error.
@@ -117,8 +118,8 @@ namespace IGIEditor
             int xLen = xVal ? xPos.ToString().Length : 0;
             int yLen = yVal ? yPos.ToString().Length : 0;
             int zLen = zVal ? zPos.ToString().Length : 0;
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "length : X:" + xLen + " Y: " + yLen + " Z: " + zLen);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with offset : X:" + offsets.x + " Y: " + offsets.y + " Z: " + offsets.z);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "length : X:" + xLen + " Y: " + yLen + " Z: " + zLen);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with offset : X:" + offsets.x + " Y: " + offsets.y + " Z: " + offsets.z);
 
 
             //Check for length error.
@@ -170,12 +171,12 @@ namespace IGIEditor
             {
                 if (qtask.name == "\"Building\"" && updateType == (int)QTASKINFO.QTASK_MODEL)
                 {
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Building " + GetModelName(qtask.id) + " compatible for orientation");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Building " + GetModelName(qtask.id) + " compatible for orientation");
                     qscData = UpdateOrientation(qtask.model, ref orientation);
                 }
                 else if (qtask.name == "\"EditRigidObj\"" && updateType != (int)QTASKINFO.QTASK_MODEL)
                 {
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "3D Object " + GetModelName(qtask.id) + " compatible for orientation");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "3D Object " + GetModelName(qtask.id) + " compatible for orientation");
                     qscData = UpdateOrientation(qtask.model, ref orientation);
                 }
                 if (!String.IsNullOrEmpty(qscData))
@@ -200,7 +201,7 @@ namespace IGIEditor
                 bool modelExist = CheckModelExist(model);
                 if (!modelExist)
                 {
-                    QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "Model " + model + " does not exist in current level");
+                    QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "Model " + model + " does not exist in current level");
                     return null;
                 }
             }
@@ -225,7 +226,7 @@ namespace IGIEditor
 
             if (qtask == null)
             {
-                QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "QScriptTask is empty for model : " + model);
+                QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "QScriptTask is empty for model : " + model);
                 return qscData;
             }
 
@@ -236,18 +237,18 @@ namespace IGIEditor
             float beta = (orientation.beta == 0.0f) ? qtask.orientation.beta : orientation.beta;
             float gamma = (orientation.gamma == 0.0f) ? qtask.orientation.gamma : orientation.gamma;
 
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with updateType  : " + (updateType == (int)QTASKINFO.QTASK_MODEL ? "MODEL" : "ID") + " position : X:" + position.x + " Y: " + position.y + " Z: " + position.z + "\t Alpha : " + orientation.alpha + ",Beta : " + orientation.beta + ",Gamma : " + orientation.gamma);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called changed updateType  : " + (updateType == (int)QTASKINFO.QTASK_MODEL ? "MODEL" : "ID") + " position : X:" + xPos + " Y: " + yPos + " Z: " + zPos + "\t Alpha : " + alpha + ",Beta : " + beta + ",Gamma : " + gamma);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with updateType  : " + (updateType == (int)QTASKINFO.QTASK_MODEL ? "MODEL" : "ID") + " position : X:" + position.x + " Y: " + position.y + " Z: " + position.z + "\t Alpha : " + orientation.alpha + ",Beta : " + orientation.beta + ",Gamma : " + orientation.gamma);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called changed updateType  : " + (updateType == (int)QTASKINFO.QTASK_MODEL ? "MODEL" : "ID") + " position : X:" + xPos + " Y: " + yPos + " Z: " + zPos + "\t Alpha : " + alpha + ",Beta : " + beta + ",Gamma : " + gamma);
 
             string taskIdStr = "Task_New(" + Convert.ToString(qtask.id);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "finding task id : " + taskIdStr);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "finding task id : " + taskIdStr);
 
             int qtaskIndex = -1;
 
             //Find task by name if id is not found.
             if (qtask.id == -1)
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Finding task by Name for RigidObj");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Finding task by Name for RigidObj");
                 var qscLines = qscData.Split('\n');
                 foreach (var qscLine in qscLines)
                 {
@@ -255,7 +256,7 @@ namespace IGIEditor
                     {
                         if (qscLine.Contains(qtask.model) && qscLine.Contains("EditRigidObj"))
                         {
-                            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "TaskByName " + model + " : qscLines : " + qscLine);
+                            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "TaskByName " + model + " : qscLines : " + qscLine);
                             qtaskIndex = qscData.IndexOf(qscLine);
                             isRigidObj = true;
                             break;
@@ -268,7 +269,7 @@ namespace IGIEditor
 
             if (qtask.id != -1)
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Finding task by Name for Building");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Finding task by Name for Building");
                 qtaskIndex = qscData.IndexOf(taskIdStr);
             }
 
@@ -281,7 +282,7 @@ namespace IGIEditor
             //Get the endline terminator.
             if (terminatorCount > 0)
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "terminator count = " + terminatorCount + " for model : " + model);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "terminator count = " + terminatorCount + " for model : " + model);
                 for (int i = 1; i <= terminatorCount; ++i)
                     endlineTerminator += ")";
 
@@ -298,7 +299,7 @@ namespace IGIEditor
                     endlineTerminator = ",";
             }
 
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Found index : " + qtaskIndex);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Found index : " + qtaskIndex);
 
             var modelName = qtask.note.Length < 3 ? FindModelName(qtask.model) : qtask.note;
             modelName = modelName.Replace("\"", String.Empty);
@@ -358,7 +359,7 @@ namespace IGIEditor
                     }
                 }
             }
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "For object : " + model + " Start : " + startTokenCount + " End : " + endTokenCount);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "For object : " + model + " Start : " + startTokenCount + " End : " + endTokenCount);
             hasMultiObjs = (startTokenCount == endTokenCount) && startTokenCount >= 2;
             return hasMultiObjs;
         }
@@ -400,18 +401,18 @@ internal static dynamic ReadModels()
                         if (modelName.Length < 3 || String.IsNullOrEmpty(modelName))
                         {
                             if (addLogs)
-                                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "couldn't find model name for Model id : " + modelId);
+                                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "couldn't find model name for Model id : " + modelId);
                             return modelName;
                         }
                     }
                 }
 
                 if (modelName.Length > 3 && !String.IsNullOrEmpty(modelName) && addLogs)
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Found model name '" + modelName + "' for id : " + modelId);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Found model name '" + modelName + "' for id : " + modelId);
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
 
             return modelName;
@@ -439,18 +440,18 @@ internal static dynamic ReadModels()
                         if (String.IsNullOrEmpty(valueRegex))
                         {
                             if (addLogs)
-                                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "couldn't find model name for Model : " + modelNameInput);
+                                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "couldn't find model name for Model : " + modelNameInput);
                             return modelName;
                         }
                     }
                 }
 
                 if (!String.IsNullOrEmpty(modelId))
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Found model id '" + modelId + "' for name : " + modelNameInput);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Found model id '" + modelId + "' for name : " + modelNameInput);
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
 
             return modelId;
@@ -469,7 +470,7 @@ internal static dynamic ReadModels()
                 {
                     if (masterModel) modelName = FindModelName(modelId);
                     else modelName = (qtask.note.Length < 3) ? FindModelName(modelId) : qtask.note;
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "found model name : " + modelName + " for model : " + modelId);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "found model name : " + modelName + " for model : " + modelId);
                     break;
                 }
             }
@@ -494,37 +495,37 @@ internal static dynamic ReadModels()
             if (qscData.Contains(elevator))
             {
                 //qscData = qscData.Replace(elevator, String.Empty);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Token elevator fixed");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Token elevator fixed");
             }
 
             if (qscData.Contains(",)") || qscData.Contains(",) "))
             {
                 qscData = qscData.Replace(",)", ")");
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Token Comma fixed");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Token Comma fixed");
             }
 
             if (qscData.Contains(",,"))
             {
                 qscData = qscData.Replace(",,", ",");
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Token Quote fixed");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Token Quote fixed");
             }
 
             if (Regex.Match(qscData, regexSub).Success && multiObj)
             {
                 //qscData = Regex.Replace(qscData, staticRegex, string.Empty, RegexOptions.Multiline);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Static block found with error expected");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Static block found with error expected");
             }
 
             if (Regex.Match(qscData, commaTokenRegex).Success && multiObj)
             {
                 qscData = Regex.Replace(qscData, commaTokenRegex, @"),", RegexOptions.Multiline);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, " Comma block found with error expected");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, " Comma block found with error expected");
             }
 
             if (Regex.Match(qscData, "^,\\s", RegexOptions.Multiline).Success)
             {
                 qscData = Regex.Replace(qscData, "^,\\s\\r\\n", String.Empty, RegexOptions.Multiline);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Multi commas fixed");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Multi commas fixed");
             }
 
             if (!String.IsNullOrEmpty(model))
@@ -536,11 +537,11 @@ internal static dynamic ReadModels()
                 if (qscData.Contains(model))
                 {
                     var qscTemp = qscData.Substring(nextlineIndex, staticTask.Length);
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "object : " + qscTemp);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "object : " + qscTemp);
 
                     if (qscTemp.Contains("Static"))
                     {
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, model + " Contains static objects");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, model + " Contains static objects");
                         qscData = qscData.Remove(nextlineIndex, staticTask.Length).Insert(nextlineIndex - 1, "),");
                     }
                     else
@@ -620,14 +621,14 @@ internal static dynamic ReadModels()
 
                 if (!modelExist)
                 {
-                    QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, model + " does not exist in current level");
+                    QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, model + " does not exist in current level");
                     return null;
                 }
             }
 
             bool hasMultiObjects = HasMultiObjects(qscData, model);
 
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, hasMultiObjects ? "Model " + model + " has multi objects" : "Model " + model + " doesn't have multi objects");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, hasMultiObjects ? "Model " + model + " has multi objects" : "Model " + model + " doesn't have multi objects");
 
             if (hasMultiObjects)
                 //qscData = RemoveMultiObjects(qscData, model, !fixErrors);
@@ -659,7 +660,7 @@ internal static dynamic ReadModels()
 
             if (model.Length < 3)
             {
-                QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "Trying to remove empty model : '" + model + "'");
+                QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "Trying to remove empty model : '" + model + "'");
                 return qscData;
             }
 
@@ -684,12 +685,12 @@ internal static dynamic ReadModels()
                                 var innerData = data.Slice(0, data.IndexOf(')') + 1);
                                 qscData = qscData.Replace(innerData, String.Empty);
                             }
-                            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Removed " + GetModelName(model) + " with id : '" + model + "' for single object");
+                            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Removed " + GetModelName(model) + " with id : '" + model + "' for single object");
 
                         }
                         else
                         {
-                            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, " Couldn't remove " + GetModelName(model) + " with id : '" + model + "' for single object");
+                            QLog.AddLog(MethodBase.GetCurrentMethod().Name, " Couldn't remove " + GetModelName(model) + " with id : '" + model + "' for single object");
                         }
                     }
                 }
@@ -708,7 +709,7 @@ internal static dynamic ReadModels()
 
                 if (!modelExist)
                 {
-                    QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, model + " does not exist in current level");
+                    QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, model + " does not exist in current level");
                 }
             }
 
@@ -743,13 +744,13 @@ internal static dynamic ReadModels()
                         if (data.Contains(QUtils.taskNew) && data.Contains("Building"))
                         {
                             endIndex = qscData.IndexOf("Building", startIndex + endIndex);
-                            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "start index : " + startIndex + " end index : " + endIndex);
+                            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "start index : " + startIndex + " end index : " + endIndex);
 
                             var buildingSub = qscData.Slice(startIndex, endIndex);
                             buildingSub = buildingSub.Remove(buildingSub.LastIndexOf(Environment.NewLine));
 
                             qscData = qscData.Replace(buildingSub, String.Empty);
-                            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Removed " + GetModelName(model) + " with id : '" + model + "' for multiple object");
+                            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Removed " + GetModelName(model) + " with id : '" + model + "' for multiple object");
                             break;
                         }
                     }
@@ -815,7 +816,7 @@ internal static dynamic ReadModels()
                                 }
                                 else
                                 {
-                                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Task count is greater than expected");
+                                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Task count is greater than expected");
                                 }
 
                             }
@@ -835,7 +836,7 @@ internal static dynamic ReadModels()
 
                         if (startTokenCount == endTokenCount)
                         {
-                            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Model " + FindModelName(model) + " with id : '" + model + "'Removed with Objects : " + startTokenCount);
+                            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Model " + FindModelName(model) + " with id : '" + model + "'Removed with Objects : " + startTokenCount);
                             break;
                         }
                     }
@@ -844,7 +845,7 @@ internal static dynamic ReadModels()
 
             if (startTokenCount != endTokenCount)
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Couldn't remove " + FindModelName(model) + " with id : '" + model + "' for multiple object");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Couldn't remove " + FindModelName(model) + " with id : '" + model + "' for multiple object");
             }
 
             if (fixErrors)
@@ -943,11 +944,11 @@ internal static dynamic ReadModels()
             if (areaType != QUtils.aiGraphTask)
                 areaType = "\"" + areaType + "\"";
 
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with dim : " + areaDim.x + " area type : " + areaType + " area count : " + areaCount + " duration : " + statusDuration + " is cutscene : " + isCutscene);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with dim : " + areaDim.x + " area type : " + areaType + " area count : " + areaCount + " duration : " + statusDuration + " is cutscene : " + isCutscene);
 
             if (areaCount > (areaType == QUtils.aiGraphTask ? qtaskGraphList.Count : qtaskList.Count))
             {
-                QUtils.ShowError("Area count should be less than total objects");
+                QLog.ShowError("Area count should be less than total objects");
                 return null;
             }
 
@@ -988,7 +989,7 @@ internal static dynamic ReadModels()
             var statusId = areaId + 1;
             var taskNoteStr = taskNote.Replace("\"", String.Empty).ToUpperInvariant();
 
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Task Id : " + taskId + " model : " + model + " model Name : '" + modelName + "' task Note : " + taskNote + " X : " + position.x + " Y : " + position.y + " Z : " + position.z + " dim : " + areaDim.x + " duration : " + statusDuration + " is cutscene : " + isCutscene);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Task Id : " + taskId + " model : " + model + " model Name : '" + modelName + "' task Note : " + taskNote + " X : " + position.x + " Y : " + position.y + " Z : " + position.z + " dim : " + areaDim.x + " duration : " + statusDuration + " is cutscene : " + isCutscene);
 
             if (!String.IsNullOrEmpty(model))
                 modelName = model.Replace("\"", String.Empty);
@@ -1020,7 +1021,7 @@ internal static dynamic ReadModels()
             {
                 if (qtask.model == model)
                 {
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Model found :  " + model + " with position : X :" + qtask.position.x + " Y: " + qtask.position.y + " Z: " + qtask.position.z);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Model found :  " + model + " with position : X :" + qtask.position.x + " Y: " + qtask.position.y + " Z: " + qtask.position.z);
                     objectPos = qtask.position;
                     break;
                 }
@@ -1042,7 +1043,7 @@ internal static dynamic ReadModels()
             {
                 if (qtask.model == model)
                 {
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Model found :  " + model + " with position : X :" + qtask.position.x + " Y: " + qtask.position.y + " Z: " + qtask.position.z);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Model found :  " + model + " with position : X :" + qtask.position.x + " Y: " + qtask.position.y + " Z: " + qtask.position.z);
                     objectOrientation = qtask.orientation;
                     break;
                 }
@@ -1055,9 +1056,9 @@ internal static dynamic ReadModels()
             var objList = new List<Dictionary<string, string>>();
             try
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with level : " + level + " With type : " + ((objType == QTYPES.BUILDING) ? "Buildings" : "3D Rigid objects" + " fromBackup : " + fromBackup));
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with level : " + level + " With type : " + ((objType == QTYPES.BUILDING) ? "Buildings" : "3D Rigid objects" + " fromBackup : " + fromBackup));
                 var qtaskList = QTask.GetQTaskList(level, false, distinct, fromBackup);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "qtaskList count : " + qtaskList.Count);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "qtaskList count : " + qtaskList.Count);
 
                 string modelName = null;
 
@@ -1076,7 +1077,7 @@ internal static dynamic ReadModels()
                             {
                                 obj.Add(modelName, qtask.model.Replace("\"", String.Empty).ToUpperInvariant());
                                 objList.Add(obj);
-                                //QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Model " + modelName + " Id : " + qtask.model);
+                                //QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Model " + modelName + " Id : " + qtask.model);
                             }
                         }
                     }
@@ -1092,7 +1093,7 @@ internal static dynamic ReadModels()
                             {
                                 obj.Add(modelName, qtask.model.Replace("\"", String.Empty).ToUpperInvariant());
                                 objList.Add(obj);
-                                //QUtils.AddLog(MethodBase.GetCurrentMethod().Name, " Model " + modelName + " ID : " + qtask.model);
+                                //QLog.AddLog(MethodBase.GetCurrentMethod().Name, " Model " + modelName + " ID : " + qtask.model);
                             }
                         }
                     }
@@ -1101,10 +1102,10 @@ internal static dynamic ReadModels()
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
             }
 
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "objects List count : " + objList.Count + " Game items: " + QUtils.GameitemsCount());
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "objects List count : " + objList.Count + " Game items: " + QUtils.GameitemsCount());
             return objList;
         }
 
@@ -1300,7 +1301,7 @@ internal static dynamic ReadModels()
             AddLog(MethodBase.GetCurrentMethod().Name, "Called with File '" + variablesFile + "'");
             if (qtaskList.Count <= 0)
             {
-                ShowLogError(MethodBase.GetCurrentMethod().Name, "Qtask list is empty");
+                QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "Qtask list is empty");
                 return;
             }
 

@@ -15,6 +15,7 @@ using System.Web;
 using System.Windows.Forms;
 using QUxLib.UX;
 using static IGIEditor.QUtils;
+using static IGIEditor.QLog;
 using static IGIEditor.QServer;
 using static System.Drawing.Color;
 using static System.Drawing.FontStyle;
@@ -238,7 +239,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -286,16 +287,16 @@ namespace IGIEditor
                 configOut += "Invincible : " + humanAi.invincible + "\n";
                 configOut += "Advance View : " + humanAi.advanceView + "\n";
 
-                var dlgResult = QUtils.ShowDialog("You are about to Add A.I confirm ?\n" + configOut);
+                var dlgResult = QLog.ShowDialog("You are about to Add A.I confirm ?\n" + configOut);
 
                 if (dlgResult == DialogResult.Yes)
                 {
-                    QUtils.AddLog("AddHumanSoldier", "Level " + gameLevel + ", Model Name: " + QObjects.FindModelName(humanAi.model) + ", " + configOut.Replace("\n", ", "));
+                    QLog.AddLog("AddHumanSoldier", "Level " + gameLevel + ", Model Name: " + QObjects.FindModelName(humanAi.model) + ", " + configOut.Replace("\n", ", "));
                     var qscData = QAI.AddHumanSoldier(humanAi);
 
                     if (String.IsNullOrEmpty(qscData))
                     {
-                        QUtils.ShowLogStatus("AddHumanSoldier", "Error: Adding " + aiModelName + " A.I to level '" + gameLevel + "'");
+                        QLog.ShowLogStatus("AddHumanSoldier", "Error: Adding " + aiModelName + " A.I to level '" + gameLevel + "'");
                         QUtils.aiScriptId = QUtils.aiScriptId > QUtils.LEVEL_FLOW_TASK_ID ? (QUtils.aiScriptId - 3) : QUtils.aiScriptId;//Reset scriptId on error.
                         return;
                     }
@@ -310,11 +311,11 @@ namespace IGIEditor
             catch (IndexOutOfRangeException ex)
             {
                 SetStatusText("A.I data cannot be empty.");
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -329,7 +330,7 @@ namespace IGIEditor
             {
                 if (!File.Exists(QUtils.versionFileName + QUtils.FileExtensions.Text))
                 {
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Editor version file is missing from directory, couldn't get correct version");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Editor version file is missing from directory, couldn't get correct version");
                     QUtils.SaveFile(QUtils.versionFileName.ToUpper() + QUtils.FileExtensions.Text, appEditorSubVersion);
                     return appEditorSubVersion;
                 }
@@ -339,14 +340,14 @@ namespace IGIEditor
 
                 if (versionCount != 3 || subVersion != appEditorSubVersion)
                 {
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Editor version file has incorrect format.");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Editor version file has incorrect format.");
                     QUtils.SaveFile(QUtils.versionFileName.ToUpper() + QUtils.FileExtensions.Text, appEditorSubVersion);
                     return appEditorSubVersion;
                 }
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return appEditorSubVersion;
         }
@@ -374,37 +375,37 @@ namespace IGIEditor
 
                     else if (Path.GetFileName(dir.FileName) == QUtils.editorUpdaterDir + QUtils.FileExtensions.Zip)
                     {
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Server: File '" + dir.FileName + "' size: " + Convert.ToInt32(dir.FileSize) / 1024 + "Kb");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Server: File '" + dir.FileName + "' size: " + Convert.ToInt32(dir.FileSize) / 1024 + "Kb");
                         tmpUpdateSize = Convert.ToInt32(dir.FileSize);
                     }
                 }
 
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Updater file Size is " + updateSize / 1024 + "Kb");
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "TmpUpdater file Size is " + tmpUpdateSize / 1024 + "Kb");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Updater file Size is " + updateSize / 1024 + "Kb");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "TmpUpdater file Size is " + tmpUpdateSize / 1024 + "Kb");
 
 
                 var result = CheckEditorVersion(updaterVersion, appEditorSubVersion);
                 if (result > 0)
                 {
                     updateAvailable = true;
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Update available Updater 'v" + updaterVersion + "' Editor: 'v" + appEditorSubVersion + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Update available Updater 'v" + updaterVersion + "' Editor: 'v" + appEditorSubVersion + "'");
                 }
                 else if (result < 0)
                 {
                     downgradeAvailable = true;
-                    QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downgrade available Updater 'v" + updaterVersion + "' Editor: 'v" + appEditorSubVersion + "'");
+                    QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downgrade available Updater 'v" + updaterVersion + "' Editor: 'v" + appEditorSubVersion + "'");
                 }
                 else
                 {
                     updateAvailable = downgradeAvailable = false;
-                    QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Editor already on latest version 'v" + updaterVersion + "' Editor: 'v" + appEditorSubVersion + "'");
+                    QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Editor already on latest version 'v" + updaterVersion + "' Editor: 'v" + appEditorSubVersion + "'");
                 }
                 if (updateAvailable || downgradeAvailable)
                 {
                     string updateMsg = "A New version of Editor is avaliable to Download\nDo you wish to update ?";
                     if (downgradeAvailable) updateMsg = "An Old version of Editor is avaliable to Download\nDo you wish to downgrade ?";
 
-                    var dlgResult = QUtils.ShowDialog(updateMsg);
+                    var dlgResult = QLog.ShowDialog(updateMsg);
                     if (dlgResult == DialogResult.Yes)
                     {
                         //Replace old version with new version.
@@ -419,7 +420,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -437,7 +438,7 @@ namespace IGIEditor
                 var qscData = QUtils.LoadFile();
                 int graphWorkTotal = graphIdList.Count, graphWorkCount = 1, graphWorkPercent = 1;
 				int level = QUtils.gGameLevel;
-
+				
 				if (level <= 0 || level > QUtils.GAME_MAX_LEVEL)
 				    level = QMemory.GetRunningLevel();
 
@@ -473,7 +474,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -520,7 +521,7 @@ namespace IGIEditor
             else
             {
                 SetStatusText("Internals not attached Attaching now....");
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Internals were not attached with the game Attaching internals now.");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Internals were not attached with the game Attaching internals now.");
                 if (!QUtils.gameFound) return;
 
                 QUtils.attachStatus = QUtils.AttachInternals();
@@ -550,7 +551,7 @@ namespace IGIEditor
 
                 if (dlgResult == DialogResult.OK)
                 {
-                    QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Mission Uploading...");
+                    QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Mission Uploading...");
                     missionNamePath = fileDlg.FileName;
                     missionName = Path.GetFileName(missionNamePath);
 
@@ -562,14 +563,14 @@ namespace IGIEditor
                     missionFullName = HttpUtility.UrlEncode(missionFullName);
                     string missionUrlPath = "/" + QServer.missionDir + "/" + missionFullName;
 
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Url: '" + missionUrl + "' file '" + missionNamePath + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Url: '" + missionUrl + "' file '" + missionNamePath + "'");
                     var status = QServer.Upload(missionUrlPath, missionNamePath);
-                    if (status) QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Mission was uploaded successfully.");
+                    if (status) QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Mission was uploaded successfully.");
                 }
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -593,13 +594,13 @@ namespace IGIEditor
                     missionNamePath = missionsOnlineDD.Text + QUtils.FileExtensions.Mission;
                 }));
 
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Url: '" + missionUrl + "' file '" + missionNamePath + "'");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Url: '" + missionUrl + "' file '" + missionNamePath + "'");
                 var status = QServer.Download(missionUrlPath, missionNamePath, QUtils.qMissionsPath);
                 if (status) SetStatusText("Mission was downloaded successfully.");
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -630,7 +631,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -668,7 +669,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -741,7 +742,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -753,7 +754,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -802,7 +803,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -834,7 +835,7 @@ namespace IGIEditor
                     }
                     catch (Exception ex)
                     {
-                        QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                        QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
                     }
 
                     //Adding Weapon SFX list.
@@ -858,7 +859,7 @@ namespace IGIEditor
                     }
                     catch (Exception ex)
                     {
-                        QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                        QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
                     }
 
                     try
@@ -873,7 +874,7 @@ namespace IGIEditor
                     }
                     catch (Exception ex)
                     {
-                        QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                        QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
                     }
 
                     //Init AI Graph list.
@@ -883,7 +884,7 @@ namespace IGIEditor
                     }
                     catch (Exception ex)
                     {
-                        QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                        QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
                     }
                 }
 
@@ -918,7 +919,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -929,7 +930,7 @@ namespace IGIEditor
                 //Init Online Missions list.
                 if (!QUtils.editorOnline)
                 {
-                    if (showWarning) QUtils.ShowWarning("Editor is not in online mode to get missions list from server.");
+                    if (showWarning) QLog.ShowWarning("Editor is not in online mode to get missions list from server.");
                     downloadMissionBtn.Enabled = uploadMissionBtn.Enabled = false;
                     return;
                 }
@@ -955,7 +956,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -979,12 +980,12 @@ namespace IGIEditor
 
                 if (initUser)
                 {
-                    //QUtils.ShowLogInfo(MethodBase.GetCurrentMethod().Name, welcomeMsg);
+                    //QLog.ShowLogInfo(MethodBase.GetCurrentMethod().Name, welcomeMsg);
                 }
 
                 else
                 {
-                    QUtils.ShowError("Error occurred while initializing user data. (Error: SERVER_ERR)");
+                    QLog.ShowError("Error occurred while initializing user data. (Error: SERVER_ERR)");
                 }
 
                 //Show Game set path dialog.
@@ -1027,7 +1028,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
         delegate void SetTextCallback(string text);
@@ -1063,9 +1064,9 @@ namespace IGIEditor
             catch (Exception ex)
             {
                 if (ex.Message.Contains("Additional text encountered"))
-                    QUtils.ShowError("Error occurred while reading HumanAI data from JSON file");
+                    QLog.ShowError("Error occurred while reading HumanAI data from JSON file");
                 else
-                    QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                    QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return humanAi;
         }
@@ -1077,7 +1078,7 @@ namespace IGIEditor
             {
                 if (level <= 0)
                 {
-                    QUtils.AddLog("IGIEditorUI.InitEditorPaths", $"Invalid level [{level}] received, defaulting to 1");
+                    QLog.AddLog("IGIEditorUI.InitEditorPaths", $"Invalid level [{level}] received, defaulting to 1");
                     level = 1;
                 }
                 QUtils.gamePath = QUtils.cfgGamePath + level;
@@ -1085,11 +1086,11 @@ namespace IGIEditor
                 inputQscPath = QUtils.cfgQscPath + level + "\\" + QUtils.objectsQsc;
                 QUtils.graphsPath = QUtils.cfgGamePath + level + "\\" + "graphs";
                 QUtils.gGameLevel = level;
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "level: " + level + " Game Path: '" + gamePath + "' QvmPath: '" + inputQvmPath + "' QscPath: '" + inputQscPath + "' Graphs Path: '" + graphsPath + "'");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "level: " + level + " Game Path: '" + gamePath + "' QvmPath: '" + inputQvmPath + "' QscPath: '" + inputQscPath + "' Graphs Path: '" + graphsPath + "'");
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -1110,7 +1111,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -1135,18 +1136,18 @@ namespace IGIEditor
                 //Load level image from Web.
                 else
                 {
-                    QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource please wait...");
+                    QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource please wait...");
                     var imgUrl = "/" + QServer.resourceDir + "/" + "mission_" + level + QUtils.FileExtensions.Jpg;
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Downloading resource URL: '" + imgUrl + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Downloading resource URL: '" + imgUrl + "'");
                     QServer.Download(imgUrl, imgPath, imgTmpPath);
                     //LoadImgBoxWeb(imgUrl, levelImgBox);
                     levelImgBox.Refresh();
-                    QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource done");
+                    QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource done");
                 }
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -1210,8 +1211,8 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
-                QUtils.ShowError("Error adding Weapon '" + weaponName + "' to level");
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowError("Error adding Weapon '" + weaponName + "' to level");
             }
         }
 
@@ -1233,7 +1234,7 @@ namespace IGIEditor
 #if !DEV_MODE
                 if (!editorModeCb.Checked)
                 {
-                    var result = QUtils.ShowEditModeDialog();
+                    var result = QLog.ShowEditModeDialog();
                     if (result) editorModeCb.Checked = true;
                     else return;
                 }
@@ -1260,10 +1261,10 @@ namespace IGIEditor
             {
                 if (ex.Message.Contains("Index was out of range"))
                 {
-                    QUtils.ShowError("No Building or Object have been selected to perfom this operation");
+                    QLog.ShowError("No Building or Object have been selected to perfom this operation");
                 }
                 else
-                    QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                    QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -1294,11 +1295,11 @@ namespace IGIEditor
             {
                 if (ex.Message.Contains("Index was out of range"))
                 {
-                    QUtils.ShowError("No Building or Object have been selected to perfom this operation");
+                    QLog.ShowError("No Building or Object have been selected to perfom this operation");
                 }
                 else
-                    QUtils.ShowError(ex.Message ?? ex.StackTrace);
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                    QLog.ShowError(ex.Message ?? ex.StackTrace);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -1322,7 +1323,7 @@ namespace IGIEditor
 #if !DEV_MODE
                 if (!editorModeCb.Checked)
                 {
-                    var result = QUtils.ShowEditModeDialog();
+                    var result = QLog.ShowEditModeDialog();
                     if (result) editorModeCb.Checked = true;
                     else return;
                 }
@@ -1344,9 +1345,9 @@ namespace IGIEditor
             catch (Exception ex)
             {
                 if (ex.Message.Contains("Index was out of range"))
-                    QUtils.ShowError("No Building or Object have been selected to perfom this operation.");
+                    QLog.ShowError("No Building or Object have been selected to perfom this operation.");
                 else
-                    QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                    QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -1377,10 +1378,10 @@ namespace IGIEditor
             {
                 if (ex.Message.Contains("Index was out of range"))
                 {
-                    QUtils.ShowError("No Building or Object have been selected to perfom this operation");
+                    QLog.ShowError("No Building or Object have been selected to perfom this operation");
                 }
                 else
-                    QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                    QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -1476,7 +1477,7 @@ namespace IGIEditor
 
                 if (autoResetCb.Checked)
                 {
-                    var dlgResult = QUtils.ShowDialog("Auto-Reset option is selected and will reset your level\nDo you want to continue?");
+                    var dlgResult = QLog.ShowDialog("Auto-Reset option is selected and will reset your level\nDo you want to continue?");
                     if (dlgResult == DialogResult.Yes)
                     {
                         QUtils.ResetScriptFile(gameLevel);
@@ -1496,7 +1497,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -1553,11 +1554,11 @@ namespace IGIEditor
             catch (Exception ex)
             {
                 if (ex.Message.Contains("Index was out of range"))
-                    QUtils.ShowError("No building or object have been selected to perfom this operation");
+                    QLog.ShowError("No building or object have been selected to perfom this operation");
                 else if (ex.Message.Contains("not in a correct format"))
-                    QUtils.ShowError("Position parameters are empty or invalid");
+                    QLog.ShowError("Position parameters are empty or invalid");
                 else
-                    QUtils.ShowError(ex.Message ?? ex.StackTrace);
+                    QLog.ShowError(ex.Message ?? ex.StackTrace);
             }
         }
 
@@ -1594,11 +1595,11 @@ namespace IGIEditor
             catch (Exception ex)
             {
                 if (ex.Message.Contains("Index was out of range"))
-                    QUtils.ShowError("No Building or Object have been selected to perfom this operation");
+                    QLog.ShowError("No Building or Object have been selected to perfom this operation");
                 else if (ex.Message.Contains("not in a correct format"))
-                    QUtils.ShowError("Position parameters are empty or invalid");
+                    QLog.ShowError("Position parameters are empty or invalid");
                 else
-                    QUtils.ShowError(ex.Message ?? ex.StackTrace);
+                    QLog.ShowError(ex.Message ?? ex.StackTrace);
             }
         }
 
@@ -1645,9 +1646,9 @@ namespace IGIEditor
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not in a correct format"))
-                    QUtils.ShowError("Position parameters are empty or invalid");
+                    QLog.ShowError("Position parameters are empty or invalid");
                 else
-                    QUtils.ShowError(ex.Message ?? ex.StackTrace);
+                    QLog.ShowError(ex.Message ?? ex.StackTrace);
             }
         }
 
@@ -1694,12 +1695,12 @@ namespace IGIEditor
                 //Load image from Web.
                 else
                 {
-                    QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource please wait...");
+                    QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource please wait...");
                     imgUrl = "/" + QServer.resourceDir + "/" + weaponName + QUtils.FileExtensions.Jpg;
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Downloading resource URL: '" + imgUrl + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Downloading resource URL: '" + imgUrl + "'");
                     QServer.Download(imgUrl, imgPath, imgTmpPath);
                     imgBox.Refresh();
-                    QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource done");
+                    QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource done");
                 }
             }
             catch (Exception ex)
@@ -1730,7 +1731,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -1762,7 +1763,7 @@ namespace IGIEditor
         private void clearCacheBtn_Click(object sender, EventArgs e)
         {
             string cacheDlg = "Clearing cache will delete all resources/data application uses.\nDo you want to continue?";
-            var dlgResult = QUtils.ShowDialog(cacheDlg, "WARNING");
+            var dlgResult = QLog.ShowDialog(cacheDlg, "WARNING");
 
             if (dlgResult == DialogResult.Yes)
             {
@@ -1810,9 +1811,9 @@ namespace IGIEditor
 
         private void aboutBtn_Click(object sender, EventArgs e)
         {
-            QUtils.ShowInfo(QUtils.aboutStr, "ABOUT");
+            QLog.ShowInfo(QUtils.aboutStr, "ABOUT");
             string readmeCmd = (QUtils.nppInstalled ? "notepad++  -nosession -notabbar -alwaysOnTop -multiInst -lhaskell \"" : "notepad \"") + QUtils.editorCurrPath + "\\" + QUtils.editorReadme + QUtils.FileExtensions.Text + "\"";
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, readmeCmd);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, readmeCmd);
             QUtils.ShellExec(readmeCmd);
         }
 
@@ -1852,7 +1853,7 @@ namespace IGIEditor
                     objectsRemoveTxt.Maximum = objectsResetTxt.Maximum = Convert.ToInt32(rigidObjCount);
                     buildingsRemoveTxt.Maximum = buildingsResetTxt.Maximum = Convert.ToInt32(buildingsCount);
                 }
-                catch (Exception ex) { QUtils.LogException(e.TabPage.Name.ToUpper(), ex); }
+                catch (Exception ex) { QLog.LogException(e.TabPage.Name.ToUpper(), ex); }
             }
 
             //A.I Editor.
@@ -1864,7 +1865,7 @@ namespace IGIEditor
                     if (aiTypeDD.Items.Count > 0 && aiModelSelectDD.Items.Count > 0 && aiWeaponDD.Items.Count > 0)
                         aiTypeDD.SelectedIndex = aiModelSelectDD.SelectedIndex = aiWeaponDD.SelectedIndex = 0;
                 }
-                catch (Exception ex) { QUtils.LogException(e.TabPage.Name.ToUpper(), ex); }
+                catch (Exception ex) { QLog.LogException(e.TabPage.Name.ToUpper(), ex); }
             }
 
             //Weapon Editor.
@@ -1876,7 +1877,7 @@ namespace IGIEditor
                         weaponDD.SelectedIndex = 0;
                     SetStatusText(e.TabPage.Name.ToLower() + " supports live editor features.");
                 }
-                catch (Exception ex) { QUtils.LogException(e.TabPage.Name.ToUpper(), ex); }
+                catch (Exception ex) { QLog.LogException(e.TabPage.Name.ToUpper(), ex); }
             }
 
 
@@ -1899,7 +1900,7 @@ namespace IGIEditor
                     if (graphIdDD.Items.Count > 0 && nodeIdDD.Items.Count > 0)
                         graphIdDD.SelectedIndex = nodeIdDD.SelectedIndex = 0;
                 }
-                catch (Exception ex) { QUtils.LogException(e.TabPage.Name.ToUpper(), ex); }
+                catch (Exception ex) { QLog.LogException(e.TabPage.Name.ToUpper(), ex); }
             }
 
             //Position Editor
@@ -1910,7 +1911,7 @@ namespace IGIEditor
                     UpdateUIComponent(buildingPosDD, QUtils.buildingListStr);
                     UpdateUIComponent(objectPosDD, QUtils.objectRigidListStr);
                 }
-                catch (Exception ex) { QUtils.LogException(e.TabPage.Name.ToUpper(), ex); }
+                catch (Exception ex) { QLog.LogException(e.TabPage.Name.ToUpper(), ex); }
             }
 
             //Human Editor
@@ -1949,7 +1950,7 @@ namespace IGIEditor
                         string modelId = objectRigid.Values.ElementAt(0);
                         if (itemCount >= itemsCount) break;
 
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Object model " + modelName + "[" + modelId + "] removed via Live Editor");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Object model " + modelName + "[" + modelId + "] removed via Live Editor");
                         QInternals.MEF_ModelRemove(modelId);
                         SetStatusText("Object " + modelName + " removed successfully");
                         QUtils.Sleep(1f);
@@ -1967,7 +1968,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -1987,7 +1988,7 @@ namespace IGIEditor
 
                         if (itemCount >= itemsCount) break;
 
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Building model " + modelName + "[" + modelId + "] removed via Live Editor");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Building model " + modelName + "[" + modelId + "] removed via Live Editor");
                         QInternals.MEF_ModelRemove(modelId);
                         SetStatusText("Buildiing " + modelName + " removed successfully");
                         QUtils.Sleep(1f);
@@ -2007,7 +2008,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -2051,7 +2052,7 @@ namespace IGIEditor
 
             if (itemsCount > qTaskListCount)
             {
-                QUtils.ShowError("Items count must be less than max items.");
+                QLog.ShowError("Items count must be less than max items.");
                 return;
             }
 
@@ -2107,9 +2108,9 @@ namespace IGIEditor
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not in a correct format"))
-                    QUtils.ShowError("Human speed parameters are empty or invalid");
+                    QLog.ShowError("Human speed parameters are empty or invalid");
                 else
-                    QUtils.ShowError(ex.Message ?? ex.StackTrace);
+                    QLog.ShowError(ex.Message ?? ex.StackTrace);
             }
         }
 
@@ -2126,9 +2127,9 @@ namespace IGIEditor
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not in a correct format"))
-                    QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "Human health parameters are empty or invalid");
+                    QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "Human health parameters are empty or invalid");
                 else
-                    QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                    QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
 
         }
@@ -2146,9 +2147,9 @@ namespace IGIEditor
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not in a correct format"))
-                    QUtils.ShowError("Human Peek parameters are empty or invalid");
+                    QLog.ShowError("Human Peek parameters are empty or invalid");
                 else
-                    QUtils.ShowError(ex.Message ?? ex.StackTrace);
+                    QLog.ShowError(ex.Message ?? ex.StackTrace);
             }
         }
 
@@ -2210,7 +2211,7 @@ namespace IGIEditor
 
             if (itemsCount > qTaskListCount)
             {
-                QUtils.ShowError("Items count must be less than max items.");
+                QLog.ShowError("Items count must be less than max items.");
                 return;
             }
 
@@ -2247,7 +2248,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -2276,19 +2277,19 @@ namespace IGIEditor
                 //Load image from Web.
                 else
                 {
-                    QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource please wait...");
+                    QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource please wait...");
                     //A.I image paths.
                     var imgUrl = "/" + QServer.resourceDir + "/" + aiModelName + QUtils.FileExtensions.Jpg;
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Downloading image resource: URL : " + imgUrl);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Downloading image resource: URL : " + imgUrl);
                     QServer.Download(imgUrl, imgPath, imgTmpPath);
                     aiImgBox.Refresh();
-                    QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource done");
+                    QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading resource done");
                 }
             }
             catch (Exception ex)
             {
                 aiImgBox.Image = null;
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -2317,7 +2318,7 @@ namespace IGIEditor
 
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -2332,11 +2333,11 @@ namespace IGIEditor
             if (((CheckBox)sender).Checked)
             {
                 string nppCmd = (QUtils.nppInstalled) ? "notepad++ -titleAdd=\"A.I Custom Files\" -nosession -notabbar -alwaysOnTop -multiInst -lcpp " : "notepad ";
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, nppCmd);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, nppCmd);
                 SetStatusText("Add your custom scripts/path for A.I");
-                QUtils.ShowInfo("Add your custom scripts for your A.I\n'XXXX' or 'YYYY' are Masking IDs dont replace them.");
+                QLog.ShowInfo("Add your custom scripts for your A.I\n'XXXX' or 'YYYY' are Masking IDs dont replace them.");
                 QUtils.ShellExec(nppCmd + QUtils.customScriptPathQEd);
-                QUtils.ShowInfo("Add your custom path for your A.I\n'XXXX' or 'YYYY' are Masking IDs dont replace them.");
+                QLog.ShowInfo("Add your custom path for your A.I\n'XXXX' or 'YYYY' are Masking IDs dont replace them.");
                 QUtils.ShellExec(nppCmd + QUtils.customPatrolPathQEd);
                 QUtils.customAiSelected = true;
                 maxSpawnsTxt.Enabled = true;
@@ -2388,7 +2389,7 @@ namespace IGIEditor
 #if DEV_MODE
                 if (!editorModeCb.Checked && !liveEditorCb.Checked)
                 {
-                    var result = QUtils.ShowEditModeDialog();
+                    var result = QLog.ShowEditModeDialog();
                     if (result) editorModeCb.Checked = true;
                     else return;
                 }
@@ -2407,7 +2408,7 @@ namespace IGIEditor
                     var modelRegex = @"\d{3}_\d{2}_\d{1}";
                     var valueRegex = Regex.Match(modelIDTxt.Text, modelRegex).Value;
                     if (String.IsNullOrEmpty(valueRegex))
-                        QUtils.ShowError("Input Object Id is in wrong format. Check Help for proper format");
+                        QLog.ShowError("Input Object Id is in wrong format. Check Help for proper format");
                     else
                     {
                         var modelId = modelIDTxt.Text;
@@ -2429,7 +2430,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -2437,7 +2438,7 @@ namespace IGIEditor
         {
             if (!editorModeCb.Checked && !liveEditorCb.Checked)
             {
-                var result = QUtils.ShowEditModeDialog();
+                var result = QLog.ShowEditModeDialog();
                 if (result) editorModeCb.Checked = true;
                 else return;
             }
@@ -2487,7 +2488,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -2521,7 +2522,7 @@ namespace IGIEditor
                      "Graph Id's: '" + graphIdsVal + "'\n" +
                      "Graph Mode: " + graphMode;
 
-                var dlgResult = QUtils.ShowDialog(dlgMsg);
+                var dlgResult = QLog.ShowDialog(dlgMsg);
                 if (dlgResult == DialogResult.Yes)
                 {
                     SetStatusText("Adding Nodes Visualisation....Please Wait");
@@ -2542,21 +2543,20 @@ namespace IGIEditor
                 QUtils.gGameLevel = QUtils.gameFound ? QMemory.GetRunningLevel() : Convert.ToInt32(levelStartTxt.Value);
                 graphIdDD.SelectedIndex = (graphIdDD.SelectedIndex == -1) ? 0 : graphIdDD.SelectedIndex;
                 aiGraphId = QUtils.aiGraphIdStr[graphIdDD.SelectedIndex];
-				QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "GraphId : " + aiGraphId + ",Level: " + QUtils.gGameLevel);
+				QLog.AddLog(MethodBase.GetCurrentMethod().Name, "GraphId : " + aiGraphId + ",Level: " + QUtils.gGameLevel);
 
                 SetStatusText("Updating GraphNodes data please wait....");
-
 				int level = QUtils.gGameLevel;
-
+				
 				if (level <= 0 || level > QUtils.GAME_MAX_LEVEL)
 				    level = QMemory.GetRunningLevel();
 
-				QUtils.AddLog(MethodBase.GetCurrentMethod().Name," Previous level: " + QUtils.gGameLevel + ", Current Level: " + level);
+				QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Before Level: " + QUtils.gGameLevel + " After Level: " + level);
 
                 // Extract Nodes Data from Graph file.
                 if (QUtils.gameFound)
                 {
-                    graphPos = QGraphs.GetGraphPosition(aiGraphId, QUtils.gGameLevel);
+                    graphPos = QGraphs.GetGraphPosition(aiGraphId,level);
                     aiGraphNodeIdStr = QGraphs.GetNodesForGraph(aiGraphId, level);
                     graphTotalNodes = aiGraphNodeIdStr.Count;
                     graphTotalNodesTxt.Text = graphTotalNodes.ToString();
@@ -2584,11 +2584,11 @@ namespace IGIEditor
                     SetStatusText("Graph#" + aiGraphId + " Marked...");
                 }
 
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "GraphId : " + aiGraphId + ",GraphArea: '" + graphArea + "',TotalNodes: " + graphTotalNodes);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "GraphId : " + aiGraphId + ",GraphArea: '" + graphArea + "',TotalNodes: " + graphTotalNodes);
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -2620,7 +2620,7 @@ namespace IGIEditor
             {
                 if (QUtils.anyaTeamTaskId == -1)
                 {
-                    QUtils.ShowError("You need to add objects (A.I/Buildings) to your custom level first");
+                    QLog.ShowError("You need to add objects (A.I/Buildings) to your custom level first");
                 }
                 else
                 {
@@ -2644,7 +2644,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -2675,7 +2675,7 @@ namespace IGIEditor
 
                     if (File.Exists(QUtils.qMissionsPath + @"\" + missionName))
                     {
-                        QUtils.ShowError("Mission '" + missionName + "' already exist in your missions directory");
+                        QLog.ShowError("Mission '" + missionName + "' already exist in your missions directory");
                         return;
                     }
                     bool isValidMission = QZip.FilesExist(missionNamePath, mFilesList);
@@ -2684,17 +2684,17 @@ namespace IGIEditor
                     if (!isValidMission) throw new Exception("Mission '" + missionName + "' is invalid mission file and cannot be installed");
 
                     QUtils.FileIOMove(missionNamePath, QUtils.qMissionsPath + @"\" + missionName);
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Mission '" + missionName + "' was installed.");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Mission '" + missionName + "' was installed.");
                     SetStatusText("Mission '" + missionName + "' was installed.");
                 }
             }
             catch (NullReferenceException ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -2702,7 +2702,7 @@ namespace IGIEditor
         {
             if (QUtils.aiScriptFiles.Count == 0)
             {
-                QUtils.ShowError("No Mission was installed in your Missions directory.");
+                QLog.ShowError("No Mission was installed in your Missions directory.");
                 return;
             }
 
@@ -2751,11 +2751,11 @@ namespace IGIEditor
 
                 QZip.Create(missionName, QUtils.FileExtensions.Mission, true);
                 QUtils.FileIOMove(missionNameExt, QUtils.qMissionsPath + @"\" + missionNameExt);
-                QUtils.ShowInfo("Mission '" + missionName + "' was saved successfully");
+                QLog.ShowInfo("Mission '" + missionName + "' was saved successfully");
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -2789,7 +2789,7 @@ namespace IGIEditor
                 {
                     if (QUtils.IsDirectoryEmpty(missionPath + @"\ai"))
                     {
-                        QUtils.ShowWarning("Mission directory doesn't include A.I Files.");
+                        QLog.ShowWarning("Mission directory doesn't include A.I Files.");
                         missionAiExist = false;
                     }
                     else missionAiExist = true;
@@ -2804,7 +2804,7 @@ namespace IGIEditor
                 QMemory.DisableGameWarnings();
                 if (missionLevel != gameLevel)
                 {
-                    var dlgResult = QUtils.ShowDialog("Mission level error do you want to switch level to '" + missionLevel + "' to continue ?", "Error");
+                    var dlgResult = QLog.ShowDialog("Mission level error do you want to switch level to '" + missionLevel + "' to continue ?", "Error");
                     if (dlgResult == DialogResult.Yes)
                     {
                         QUtils.ResetScriptFile(missionLevel);
@@ -2863,7 +2863,7 @@ namespace IGIEditor
                 }
 
                 QUtils.aiScriptId += aiFilesCount * 2;//Update A.I Script Index.
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Ai Script Id : " + aiScriptId);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Ai Script Id : " + aiScriptId);
 
                 QUtils.DirectoryDelete(missionPath);
                 missionNameTxt.Text = missionName;
@@ -2873,7 +2873,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -2884,7 +2884,7 @@ namespace IGIEditor
             if (removeAllAiCb.Checked) aiModelName = "all_a.i_soldiers";
             var aiModelQualifyName = aiModelName.Contains("_") ? aiModelName.Substring(0, aiModelName.IndexOf("_")) : aiModelName;
 
-            var dlgResult = QUtils.ShowDialog("Do you want to remove '" + aiModelQualifyName + "' from level ?");
+            var dlgResult = QLog.ShowDialog("Do you want to remove '" + aiModelQualifyName + "' from level ?");
             if (dlgResult == DialogResult.No) return;
 
             string qscData = QUtils.LoadFile();
@@ -2904,7 +2904,7 @@ namespace IGIEditor
 
             //if (QUtils.aiScriptFiles.Count == 0)
             //{
-            //    QUtils.ShowError("No A.I Soldiers were added yet.");
+            //    QLog.ShowError("No A.I Soldiers were added yet.");
             //    return;
             //}
 
@@ -2917,7 +2917,7 @@ namespace IGIEditor
 
         private void teleportToGraphBtn_Click(object sender, EventArgs e)
         {
-            if (!viewPortCameraEnableCb.Checked) { QUtils.ShowWarning("Camera ViewPort was not enabled yet."); viewPortCameraEnableCb.Checked = true; }
+            if (!viewPortCameraEnableCb.Checked) { QLog.ShowWarning("Camera ViewPort was not enabled yet."); viewPortCameraEnableCb.Checked = true; }
             //Graph Teleport section - MANUAL.
             if (manualTeleportGraphCb.Checked) QUtils.UpdateViewPort(graphPos);
 
@@ -2935,7 +2935,7 @@ namespace IGIEditor
 
         private void teleportToNodeBtn_Click(object sender, EventArgs e)
         {
-            if (!viewPortCameraEnableCb.Checked) { QUtils.ShowWarning("Camera ViewPort was not enabled yet."); viewPortCameraEnableCb.Checked = true; }
+            if (!viewPortCameraEnableCb.Checked) { QLog.ShowWarning("Camera ViewPort was not enabled yet."); viewPortCameraEnableCb.Checked = true; }
 
             //Graph Teleport section - MANUAL.
             if (manualTeleportNodeCb.Checked) QUtils.UpdateViewPort(nodeRealPos);
@@ -2962,7 +2962,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
 #endif
         }
@@ -2977,7 +2977,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
 #endif
         }
@@ -3142,12 +3142,12 @@ namespace IGIEditor
             //HumanSoldierFemale exceptions.
             if (aiModelName == "ANYA" && (aiTypeName != "ANYA" && aiTypeName != "EKK"))
             {
-                QUtils.ShowWarning("HumanSoldier-Female 'ANYA' Type should also be of female soldier.", "A.I WARNING");
+                QLog.ShowWarning("HumanSoldier-Female 'ANYA' Type should also be of female soldier.", "A.I WARNING");
                 addAiBtn.Enabled = false;
             }
             else if (aiModelName == "EKK" && (aiTypeName != "ANYA" && aiTypeName != "EKK"))
             {
-                QUtils.ShowWarning("HumanSoldier-Female 'EKK' Type should also be of female soldier.", "A.I WARNING");
+                QLog.ShowWarning("HumanSoldier-Female 'EKK' Type should also be of female soldier.", "A.I WARNING");
                 addAiBtn.Enabled = false;
             }
             else
@@ -3203,7 +3203,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -3217,7 +3217,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -3305,7 +3305,7 @@ namespace IGIEditor
                      "Graph Id's: '" + graphIdsVal + "'\n" +
                      "Graph Mode: " + graphMode;
 
-                var dlgResult = QUtils.ShowDialog(dlgMsg);
+                var dlgResult = QLog.ShowDialog(dlgMsg);
                 if (dlgResult == DialogResult.Yes)
                 {
                     SetStatusText("Adding Nodes Link Visualisation....Please Wait");
@@ -3372,11 +3372,11 @@ namespace IGIEditor
 
                 string graphArea = QGraphs.GetGraphArea(graphAiId);
                 graphAreaAiLbl.Text = graphArea;
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "GraphId : " + aiGraphId + " GraphArea: " + graphArea);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "GraphId : " + aiGraphId + " GraphArea: " + graphArea);
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -3390,14 +3390,14 @@ namespace IGIEditor
                 if (graphIdDD.Items.Count > 0 && nodeIdDD.Items.Count > 0)
                     graphIdDD.SelectedIndex = nodeIdDD.SelectedIndex = 0;
             }
-            catch (Exception ex) { QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex); }
+            catch (Exception ex) { QLog.LogException(MethodBase.GetCurrentMethod().Name, ex); }
         }
 
         private void updateCheckerCb_CheckedChanged(object sender, EventArgs e)
         {
             if (updateCheckerCb.Checked)
             {
-                var dlgResult = QUtils.ShowDialog("Do you want to check for new updates in every " + QUtils.updateTimeInterval + " minutes?");
+                var dlgResult = QLog.ShowDialog("Do you want to check for new updates in every " + QUtils.updateTimeInterval + " minutes?");
                 if (dlgResult == DialogResult.Yes)
                 {
                     updateCheckerTimer.Interval = QUtils.updateTimeInterval * 60000;
@@ -3501,7 +3501,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -3510,11 +3510,11 @@ namespace IGIEditor
             string devViewerData = devViewerTxt.Text;
             if (!String.IsNullOrEmpty(devViewerData))
             {
-                var dlgResult = QUtils.ShowDialog("Do you want to save the file '" + devFileNameTxt.Text + "'?");
+                var dlgResult = QLog.ShowDialog("Do you want to save the file '" + devFileNameTxt.Text + "'?");
                 if (dlgResult == DialogResult.Yes)
                 {
                     if (String.IsNullOrEmpty(devFileNameTxt.Text))
-                        QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "Dev file name is invalid.");
+                        QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "Dev file name is invalid.");
                     else
                         QUtils.SaveFile(devFileNameTxt.Text, devViewerData);
 
@@ -3567,72 +3567,72 @@ namespace IGIEditor
                 string readmePath = QUtils.editorCurrPath + "\\" + QUtils.editorReadme + QUtils.FileExtensions.Text;
                 string changeLogsData = QUtils.LoadFile(QUtils.editorChangeLogs + QUtils.FileExtensions.Text);
 
-                var dlgRes = QUtils.ShowDialog("Did you Cleaned and Batch Build the new Project ?");
+                var dlgRes = QLog.ShowDialog("Did you Cleaned and Batch Build the new Project ?");
                 if (dlgRes == DialogResult.Yes)
                 {
                     //Check if correct version provided.
                     var result = CheckEditorVersion(devVersionTxt.Text, appEditorSubVersion);
                     if (result != 0)
                     {
-                        QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "Updater Version not same as Editor.\nEditor version v" + appEditorSubVersion + " Provided version is v" + devVersionTxt.Text);
+                        QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "Updater Version not same as Editor.\nEditor version v" + appEditorSubVersion + " Provided version is v" + devVersionTxt.Text);
                         return;
                     }
 
-                    var dlgResult = QUtils.ShowDialog("Do you want to create new update for Editor version 'v" + devVersionTxt.Text + "?");
+                    var dlgResult = QLog.ShowDialog("Do you want to create new update for Editor version 'v" + devVersionTxt.Text + "?");
                     if (dlgResult == DialogResult.Yes)
                     {
                         var changeLogIndex = changeLogsData.IndexOf("version " + devVersionTxt.Text);
                         if (changeLogIndex == -1)
                         {
-                            QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "Updater changelogs not found for version v'" + devVersionTxt.Text + "'");
+                            QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "Updater changelogs not found for version v'" + devVersionTxt.Text + "'");
                             return;
                         }
                         changeLogsData = changeLogsData.Substring(changeLogIndex);
-                        QUtils.ShowLogInfo(MethodBase.GetCurrentMethod().Name, "Confirm the changelogs:\n" + changeLogsData);
+                        QLog.ShowLogInfo(MethodBase.GetCurrentMethod().Name, "Confirm the changelogs:\n" + changeLogsData);
 
                         //Delete previous updated from Dev path.
                         QUtils.FileIODelete(QUtils.editorUpdater);
 
                         QUtils.FileIOCopy(rlsPath + "\\" + editorExe, cachePath + "\\" + editorExe);
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Moving file '" + rlsPath + "\\" + editorExe + "' to " + cachePath + "\\" + editorExe + "'");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Moving file '" + rlsPath + "\\" + editorExe + "' to " + cachePath + "\\" + editorExe + "'");
 
                         //Moving bin folder to cache.
                         QUtils.DirectoryIOCopy(devPathBin, cachePathBin);
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Moving bin folder from '" + dbgPathBin + "' to '" + cachePathBin + "'");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Moving bin folder from '" + dbgPathBin + "' to '" + cachePathBin + "'");
 
                         //Archive all path to .zip
                         string zipCmd = "7z a -tzip " + editorUpdater + " " + cachePath + "\\" + editorExe + " " + cachePathBin + " " + changelogsPath + " " + versionPath + " " + readmePath;
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Running zip command '" + zipCmd + "'");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Running zip command '" + zipCmd + "'");
                         string shellOut = QUtils.ShellExec(zipCmd, true);
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Shell output: '" + shellOut + "'");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Shell output: '" + shellOut + "'");
 
                         //Remove Updater from Cache.
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Remove Updater from Cache.");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Remove Updater from Cache.");
                         QUtils.FileIODelete(cachePath + "\\" + editorExe);
                         QUtils.FileIODelete(cachePath + "\\" + editorx86);
                         QUtils.DirectoryIODelete(cachePathBin);
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Remove Updater from Cache....DONE!");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Remove Updater from Cache....DONE!");
 
                         //Check if update created successfully.
                         if (File.Exists(editorUpdater))
                         {
-                            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Creating new updated versions file.");
+                            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Creating new updated versions file.");
                             //Create new version files for updater.
                             QUtils.SaveFile("Updater-" + devVersionTxt.Text + ".txt", devVersionTxt.Text);
                             QUtils.SaveFile(QUtils.versionFileName + ".txt", devVersionTxt.Text);
-                            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Creating new updated versions file...DONE!");
+                            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Creating new updated versions file...DONE!");
 
                             float fileSize = new FileInfo(editorUpdater).Length / 1024;
                             devFileNameTxt.Text = editorUpdater;
                             devFileSizeTxt.Text = "File Size: " + fileSize + "Kb";
-                            QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Update created successfully.");
+                            QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Update created successfully.");
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                QUtils.ShowException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -3641,7 +3641,7 @@ namespace IGIEditor
             try
             {
                 string updaterMask = "Updater-", updaterVersionTag = updaterMask + QUtils.appEditorSubVersion + QUtils.FileExtensions.Text, updaterVerTag = updaterVersionTag;
-                if (!File.Exists(QUtils.editorUpdater) || !File.Exists(updaterVersionTag)) { QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "Updater file not found in current directory."); return; }
+                if (!File.Exists(QUtils.editorUpdater) || !File.Exists(updaterVersionTag)) { QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "Updater file not found in current directory."); return; }
 
                 float fileSize = new FileInfo(QUtils.editorUpdater).Length / 1024;
                 //Get the remote version accordinly to current version.
@@ -3649,40 +3649,40 @@ namespace IGIEditor
                 var version = (updaterVersion[updaterVersion.Length - 1] - 1) - 0x30;
                 var remoteVersion = updaterVersion.Slice(0, updaterVersion.Length - 1) + version.ToString();
 
-                var dlgResult = QUtils.ShowDialog("Do you want to upload new update for Editor version 'v" + devVersionTxt.Text + "'\nUpdater Size:" + fileSize + "Kbs\nRemote version '" + remoteVersion + "'");
+                var dlgResult = QLog.ShowDialog("Do you want to upload new update for Editor version 'v" + devVersionTxt.Text + "'\nUpdater Size:" + fileSize + "Kbs\nRemote version '" + remoteVersion + "'");
                 if (dlgResult == DialogResult.Yes)
                 {
                     string updateUrlPath = "/" + QServer.updateDir + "/" + QUtils.editorUpdater;
                     string updateVersionUrlPath = "/" + QServer.updateDir + "/" + updaterVersionTag;
                     string remoteVersionUrlPath = "/" + QServer.updateDir + "/" + updaterMask + remoteVersion + QUtils.FileExtensions.Text;
 
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Url: '" + updateUrlPath + "' file '" + devFileNameTxt.Text + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Url: '" + updateUrlPath + "' file '" + devFileNameTxt.Text + "'");
                     var status = QServer.Upload(updateUrlPath, QUtils.editorUpdater);
 
                     if (status)
                     {
-                        QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Editor files were uploaded successfully.");
+                        QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Editor files were uploaded successfully.");
                         QServer.Delete(remoteVersionUrlPath);
                         status = true;
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Removed previous version file successfully.");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Removed previous version file successfully.");
                     }
                     if (status)
                     {
                         status = QServer.Upload(updateVersionUrlPath, updaterVersionTag);
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Uploading new version file for server.");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Uploading new version file for server.");
                     }
 
                     if (status)
                     {
                         devFileNameTxt.Text = editorUpdater;
                         devFileSizeTxt.Text = "File Size: " + fileSize + "Kb";
-                        QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Update uploaded successfully.");
+                        QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Update uploaded successfully.");
                     }
                 }
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -3714,7 +3714,7 @@ namespace IGIEditor
 			//Check for Max FPS.
             if (frame < MIN_FPS || frame > MAX_FPS)
             {
-				QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Frames value is out of range.");
+				QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Frames value is out of range.");
                 ((NumericUpDown)sender).Value = frame = gameFPS = 30;
             }
         }
@@ -3750,7 +3750,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -3779,15 +3779,15 @@ namespace IGIEditor
                             QUtils.Sleep(1);
                             if (QUtils.CreateGameShortcut())
                                 startGameBtn_Click(sender, e);
-                            else QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "Error in creating new game shortcut");
+                            else QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "Error in creating new game shortcut");
                         }
-                        else QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Error in removing existing shortcut");
+                        else QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Error in removing existing shortcut");
                     }
                 }
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -3795,11 +3795,11 @@ namespace IGIEditor
         {
             if (String.IsNullOrEmpty(fopenIO.FileData))
             {
-                QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "JSON Editor data is empty.", "JSON Editor.");
+                QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "JSON Editor data is empty.", "JSON Editor.");
                 return;
             }
 
-            var dlgMsg = QUtils.ShowDialog("Do you want to save your all A.I data to A.I's list?");
+            var dlgMsg = QLog.ShowDialog("Do you want to save your all A.I data to A.I's list?");
             if (dlgMsg == DialogResult.Yes)
             {
                 var humanAi = ReadHumanAiJSON(fopenIO.FileName);
@@ -3811,7 +3811,7 @@ namespace IGIEditor
 
         private void aiJsonAddAiBtn_Click(object sender, EventArgs e)
         {
-            if (humanAiList.Count == 0) QUtils.ShowLogError("AddHumanSoldierJSON", "No A.I JSON Files were added to list yet.", "JSON Editor.");
+            if (humanAiList.Count == 0) QLog.ShowLogError("AddHumanSoldierJSON", "No A.I JSON Files were added to list yet.", "JSON Editor.");
             else if (humanAiList.Count >= 1)
             {
                 try
@@ -3819,15 +3819,15 @@ namespace IGIEditor
                     foreach (var humanAi in humanAiList)
                     {
                         var aiModelName = QObjects.FindModelName(humanAi.model);
-                        var dlgResult = QUtils.ShowDialog("You are about to Add " + aiModelName + "A.I confirm ?\nThis is manual editing so be carefuly about data you edit.", "JSON Editor");
+                        var dlgResult = QLog.ShowDialog("You are about to Add " + aiModelName + "A.I confirm ?\nThis is manual editing so be carefuly about data you edit.", "JSON Editor");
 
                         if (dlgResult == DialogResult.Yes)
                         {
-                            QUtils.AddLog("AddHumanSoldierJSON", "Level " + gameLevel + ", Model Name: " + aiModelName);
+                            QLog.AddLog("AddHumanSoldierJSON", "Level " + gameLevel + ", Model Name: " + aiModelName);
                             var qscData = QAI.AddHumanSoldier(humanAi);
                             if (String.IsNullOrEmpty(qscData))
                             {
-                                QUtils.ShowLogStatus("AddHumanSoldierJSON", "Error: Adding " + aiModelName + " A.I to level '" + gameLevel + "'");
+                                QLog.ShowLogStatus("AddHumanSoldierJSON", "Error: Adding " + aiModelName + " A.I to level '" + gameLevel + "'");
                                 QUtils.aiScriptId = QUtils.aiScriptId > QUtils.LEVEL_FLOW_TASK_ID ? (QUtils.aiScriptId - 3) : QUtils.aiScriptId;//Reset scriptId on error.
                                 return;
                             }
@@ -3842,7 +3842,7 @@ namespace IGIEditor
                 }
                 catch (Exception ex)
                 {
-                    QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                    QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
                 }
             }
 
@@ -3852,16 +3852,16 @@ namespace IGIEditor
         private void aiJsonSaveBtn_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(aiJsonEditorTxt.Text))
-                QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "File contents are empty or invalid.", "JSON Editor.");
+                QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "File contents are empty or invalid.", "JSON Editor.");
 
-            var dlgMsg = QUtils.ShowDialog("Do you want to save all contents of '" + aiFileNameTxt.Text + "'?");
+            var dlgMsg = QLog.ShowDialog("Do you want to save all contents of '" + aiFileNameTxt.Text + "'?");
             if (dlgMsg == DialogResult.Yes)
             {
                 var data = aiJsonEditorTxt.Text;
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "File name: " + aiFileNameTxt.Text + " Path: " + fopenIO.FileName);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "File name: " + aiFileNameTxt.Text + " Path: " + fopenIO.FileName);
                 QUtils.SaveFile(fopenIO.FileName, data);
                 if (aiJsonClearDataCb.Checked) aiJsonEditorTxt.Clear();
-                QUtils.ShowInfo("File " + aiFileNameTxt.Text + " was saved successfully");
+                QLog.ShowInfo("File " + aiFileNameTxt.Text + " was saved successfully");
             }
         }
 
@@ -3917,10 +3917,10 @@ namespace IGIEditor
                 if (!Directory.Exists(aiJsonFile))
                 {
                     Directory.CreateDirectory(aiJsonFile);
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Created directory '" + aiJsonFile + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Created directory '" + aiJsonFile + "'");
                 }
 
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "AiJson Path: " + qedAiJsonPath + " AiJson File: " + aiJsonFile + " level: " + gameLevel);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "AiJson Path: " + qedAiJsonPath + " AiJson File: " + aiJsonFile + " level: " + gameLevel);
 
                 if (!Directory.Exists(qedAiJsonPath + "\\level" + gameLevel))
                     Directory.CreateDirectory(qedAiJsonPath + "\\level" + gameLevel);
@@ -3965,7 +3965,7 @@ namespace IGIEditor
         {
             if (internalCompilerCb.Checked)
             {
-                var dlgResult = QUtils.ShowDialog("Do you want to change Compiler to Internal?\nCompiler - Internal [Fast]\nRequires - Internals.dll", "Select Game Compiler");
+                var dlgResult = QLog.ShowDialog("Do you want to change Compiler to Internal?\nCompiler - Internal [Fast]\nRequires - Internals.dll", "Select Game Compiler");
 
                 if (dlgResult == DialogResult.Yes)
                 {
@@ -3983,7 +3983,7 @@ namespace IGIEditor
         {
             if (externalCompilerCb.Checked)
             {
-                var dlgResult = QUtils.ShowDialog("Do you want to change Compiler to External?\nCompiler - External [Slow]\nRequires - GConv/DConv Tools.", "Select Game Compiler");
+                var dlgResult = QLog.ShowDialog("Do you want to change Compiler to External?\nCompiler - External [Slow]\nRequires - GConv/DConv Tools.", "Select Game Compiler");
 
                 if (dlgResult == DialogResult.Yes)
                 {
@@ -4022,7 +4022,7 @@ namespace IGIEditor
                     if (aiTypeDD.Items.Count > 0 && aiModelSelectDD.Items.Count > 0 && aiWeaponDD.Items.Count > 0)
                         aiTypeDD.SelectedIndex = aiModelSelectDD.SelectedIndex = aiWeaponDD.SelectedIndex = 0;
                 }
-                catch (Exception ex) { QUtils.LogException(e.TabPage.Name.ToUpper(), ex); }
+                catch (Exception ex) { QLog.LogException(e.TabPage.Name.ToUpper(), ex); }
             }
 
             else if (e.TabPage.Name == "aiScriptEditor")
@@ -4031,7 +4031,7 @@ namespace IGIEditor
                 {
                     DialogMsgBox.ShowBox("Script Editor.", "Script editor coming soon in next updates");
                 }
-                catch (Exception ex) { QUtils.LogException(e.TabPage.Name.ToUpper(), ex); }
+                catch (Exception ex) { QLog.LogException(e.TabPage.Name.ToUpper(), ex); }
             }
 
             else if (e.TabPage.Name == "aiPatrolPathEditor")
@@ -4040,7 +4040,7 @@ namespace IGIEditor
                 {
                     DialogMsgBox.ShowBox("PatrolPath Editor.", "PatrolPath editor coming soon in next updates");
                 }
-                catch (Exception ex) { QUtils.LogException(e.TabPage.Name.ToUpper(), ex); }
+                catch (Exception ex) { QLog.LogException(e.TabPage.Name.ToUpper(), ex); }
             }
 
         }
@@ -4083,7 +4083,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -4093,7 +4093,7 @@ namespace IGIEditor
             {
                 fopenIO = QUtils.ShowOpenFileDlg("Select JSON File", ".json", "JSON File|*.json|Text file|*.txt", true, qWeaponsGroupPath);
                 var fileName = Path.GetFileName(fopenIO.FileName);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "File '" + fileName + "' selected for WeaponGroup");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "File '" + fileName + "' selected for WeaponGroup");
                 string qscData = null;
 
                 if (!String.IsNullOrEmpty(fopenIO.FileData))
@@ -4121,7 +4121,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -4248,7 +4248,7 @@ namespace IGIEditor
             if (status)
             {
                 QInternals.WeaponConfigRead();
-                QUtils.ShowLogStatus("", "Weapon properties updated success");
+                QLog.ShowLogStatus("", "Weapon properties updated success");
             }
         }
 
@@ -4280,7 +4280,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -4290,7 +4290,7 @@ namespace IGIEditor
             if (status)
             {
                 QInternals.WeaponConfigRead();
-                QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Weapon details properties updated success");
+                QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Weapon details properties updated success");
             }
         }
 
@@ -4300,7 +4300,7 @@ namespace IGIEditor
             if (status)
             {
                 QInternals.WeaponConfigRead();
-                QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Weapon UI properties updated success");
+                QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Weapon UI properties updated success");
             }
         }
 
@@ -4310,7 +4310,7 @@ namespace IGIEditor
             if (status)
             {
                 QInternals.WeaponConfigRead();
-                QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Weapon SFX properties updated success");
+                QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Weapon SFX properties updated success");
             }
         }
 
@@ -4320,7 +4320,7 @@ namespace IGIEditor
             if (status)
             {
                 QInternals.WeaponConfigRead();
-                QUtils.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Weapon Power properties updated success");
+                QLog.ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Weapon Power properties updated success");
             }
         }
 
@@ -4360,7 +4360,7 @@ namespace IGIEditor
             if (status)
             {
                 QInternals.WeaponConfigRead();
-                QUtils.ShowLogStatus("", "Weapon reset success");
+                QLog.ShowLogStatus("", "Weapon reset success");
             }
         }
 
@@ -4441,7 +4441,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -4460,7 +4460,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -4547,7 +4547,7 @@ namespace IGIEditor
             + @"%20while%20using%20editor%20please%20check%20the%20logs%20attached.%0D%0APlease%20attach%20the%20Logs%20file%20located%20at"
             + @"%20'" + appLogPath + @"'%20location%20in%20the%20attachment%20to%20this%20email.";
             QUtils.ShellExecUrl(mailToUrl);
-            QUtils.ShowWarning("Please attach the log file located at '" + appLogPath + "' with this email.");
+            QLog.ShowWarning("Please attach the log file located at '" + appLogPath + "' with this email.");
         }
 
         private void viewAppLogsBtn_Click(object sender, EventArgs e)
@@ -4598,7 +4598,7 @@ namespace IGIEditor
             {
                 QUtils.updateTimeInterval = MAX_UPDATE_TIME;
                 updateIntervalTxt.Text = QUtils.updateTimeInterval.ToString();
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -4653,7 +4653,7 @@ namespace IGIEditor
                     }
                     string filePath = Path.Combine(directoryPath, fileName + ".json");
                     QUtils.SaveFile(filePath, weaponPropertiesJson);
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Weapon properties saved to file: " + fileName);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Weapon properties saved to file: " + fileName);
                 }
             }
         }
@@ -4684,16 +4684,16 @@ namespace IGIEditor
                     weaponRoundPerMinuteTxt.Text = weaponProperties["weaponRoundPerMinuteTxt"];
                     weaponRoundPerClipTxt.Text = weaponProperties["weaponRoundPerClipTxt"];
 
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Weapon properties loaded from file: " + fileName);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Weapon properties loaded from file: " + fileName);
                 }
                 else
                 {
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Weapon properties file not found: " + fileName);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Weapon properties file not found: " + fileName);
                 }
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -4710,11 +4710,11 @@ namespace IGIEditor
 
             string tgaConvArgs = $"{inputFilePath} -ToTga --resize {width} {height}";
             string tgaConvDir = Path.Combine(QUtils.qTools, @"TGAConv");
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Running TGAConv: {tgaConvExePath} {tgaConvArgs} in directory {tgaConvDir}");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Running TGAConv: {tgaConvExePath} {tgaConvArgs} in directory {tgaConvDir}");
             QUtils.ShellExec($"cd {tgaConvDir} && {tgaConvExePath} {tgaConvArgs}");
 
             string tgaFilePath = Path.Combine(tgaConvPath, inputFileWithoutExt + ".tga");
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Input TGA Path: " + tgaFilePath);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Input TGA Path: " + tgaFilePath);
             string destTgaFilePath = Path.Combine(tgaConvPath, Path.GetFileName(tgaFilePath));
 
             if (File.Exists(tgaFilePath) && !File.Exists(destTgaFilePath))
@@ -4724,10 +4724,10 @@ namespace IGIEditor
 
             if (!File.Exists(destTgaFilePath))
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Error: TGAConv failed to convert {inputFilePath} to TGA format");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Error: TGAConv failed to convert {inputFilePath} to TGA format");
                 return status;
             }
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"TGAConv conversion of {inputFilePath} to TGA format completed successfully");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"TGAConv conversion of {inputFilePath} to TGA format completed successfully");
             status = true;
             return status;
         }
@@ -4763,7 +4763,7 @@ namespace IGIEditor
                 string dconvArgs = "tex convert input output";
                 string dconvDir = Path.Combine(QUtils.qTools, @"DConv");
                 QUtils.ShellExec($"cd {dconvDir} && {dconvPath} {dconvArgs}");
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "DConv conversion completed");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "DConv conversion completed");
 
                 // Move TGA files from DConv output directory to TGAConv directory
                 string tgaConvPath = Path.Combine(QUtils.qTools, @"TGAConv");
@@ -4773,23 +4773,23 @@ namespace IGIEditor
                     string fileName = Path.GetFileName(file);
                     string destination = Path.Combine(destDir, fileName);
                     QUtils.FileMove(file, destination);
-                    //QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Moved TGA file to TGAConv directory: {destination}");
+                    //QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Moved TGA file to TGAConv directory: {destination}");
                 }
 
                 // Run TGAConv to convert TGA files to PNG
                 string tgaConvExePath = Path.Combine(tgaConvPath, "tgaconv.exe");
                 string tgaConvArgs = "*.tga -ToPng";
                 string tgaConvDir = Path.Combine(QUtils.qTools, @"TGAConv");
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Running TGAConv: {tgaConvExePath} {tgaConvArgs} in directory {tgaConvDir}");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Running TGAConv: {tgaConvExePath} {tgaConvArgs} in directory {tgaConvDir}");
                 QUtils.ShellExec($"cd {tgaConvDir} && {tgaConvExePath} {tgaConvArgs}");
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "TGAConv conversion completed");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "TGAConv conversion completed");
 
                 // Return the path to the TGAConv directory
                 return tgaConvPath;
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
                 return null;
             }
         }
@@ -4805,7 +4805,7 @@ namespace IGIEditor
             //string pngFilePath = Path.Combine(convPath, $"{sourceFileNameWithoutExt}.png");
             if (File.Exists(textureFile))
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Output PNG file: {textureFile}");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Output PNG file: {textureFile}");
                 Bitmap bitmap = new Bitmap(textureFile);
                 textureBox.Image = bitmap;
 
@@ -4817,7 +4817,7 @@ namespace IGIEditor
             }
             else
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "No output PNG file found");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "No output PNG file found");
             }
         }
 
@@ -4843,17 +4843,17 @@ namespace IGIEditor
                 if (folderBrowserDlg == DialogResult.OK)
                 {
                     textureSelectedPath = Path.GetDirectoryName(folderBrowser.FileName) + Path.DirectorySeparatorChar;
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"selectedPath: {textureSelectedPath}");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"selectedPath: {textureSelectedPath}");
                     string outputPath = null;
 
                     if (folderBrowser.FileName.Contains(".res"))
                     {
-                        QUtils.ShowWarning("Resource file needs to be unpacked first.");
+                        QLog.ShowWarning("Resource file needs to be unpacked first.");
                         UnpackResourceFile(folderBrowser.FileName);
                         SetStatusText($"File {folderBrowser.FileName} unpacked success");
                         var basePathName = Path.GetFileName(Path.GetDirectoryName(folderBrowser.FileName));
                         textureSelectedPath += Path.DirectorySeparatorChar + basePathName;
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"After Unpacking new path: {textureSelectedPath}");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"After Unpacking new path: {textureSelectedPath}");
 
                         outputPath = ConvertTextureImage(textureSelectedPath, true);
                         texFiles = Directory.GetFiles(outputPath, "*.png");
@@ -4877,7 +4877,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -4899,7 +4899,7 @@ namespace IGIEditor
                 }
 
                 string sourceFileNameWithoutExt = Path.GetFileNameWithoutExtension(inputFilePath);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Selected output directory: {outputDirectoryPath}");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Selected output directory: {outputDirectoryPath}");
 
                 // Run TGAConv to convert JPG/PNG to TGA.
                 string tgaConvPath = Path.Combine(QUtils.qTools, @"TGAConv");
@@ -4927,7 +4927,7 @@ namespace IGIEditor
                     File.WriteAllText(makeScriptPath, makeTexCmd + "\r\n");
                     inputConvertPath = Path.GetDirectoryName(tgaFilePath);
                     outputConvertPath = Path.GetDirectoryName(texFilePath);
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Added MakeTex command: {makeTexCmd}");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Added MakeTex command: {makeTexCmd}");
                 }
 
                 else if (convertType == "sprite")
@@ -4940,7 +4940,7 @@ namespace IGIEditor
                     File.WriteAllText(makeScriptPath, makeTexCmd + "\r\n");
                     inputConvertPath = Path.GetDirectoryName(tgaFilePath);
                     outputConvertPath = Path.GetDirectoryName(sprFilePath);
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Added MakeTex command: {makeTexCmd}");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Added MakeTex command: {makeTexCmd}");
                 }
 
                 else if (convertType == "pic")
@@ -4953,19 +4953,19 @@ namespace IGIEditor
                     File.WriteAllText(makeScriptPath, makeTexCmd + "\r\n");
                     inputConvertPath = Path.GetDirectoryName(tgaFilePath);
                     outputConvertPath = Path.GetDirectoryName(picFilePath);
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Added MakeTex command: {makeTexCmd}");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Added MakeTex command: {makeTexCmd}");
                 }
 
                 // Run GConv to generate game resource file
                 string gconvPath = Path.Combine(QUtils.qTools, @"GConv\gconv.exe");
                 string gconvArgs = $"\"{makeScriptPath}\" -InputPath={inputConvertPath} -OutputPath={outputConvertPath}";
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Running GConv: {gconvPath} {gconvArgs}");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Running GConv: {gconvPath} {gconvArgs}");
                 QUtils.ShellExec($"{gconvPath} {gconvArgs}");
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "GConv conversion completed");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "GConv conversion completed");
 
                 // Clean up directories
                 File.Delete(makeScriptPath);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Cleaning up directories");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Cleaning up directories");
 
                 string textureBoxImagePath = texFiles[texIndex];
                 string textureBoxImage = Path.GetFileName(textureBoxImagePath);
@@ -4993,7 +4993,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -5012,7 +5012,7 @@ namespace IGIEditor
             {
                 string scriptPath = openFileDialog.FileName;
                 string sourceFileNameWithoutExt = Path.GetFileNameWithoutExtension(scriptPath);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Selected GConv script file: {scriptPath}");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Selected GConv script file: {scriptPath}");
                 PackResourceFile(scriptPath);
             }
         }
@@ -5021,16 +5021,16 @@ namespace IGIEditor
         {
             // Get the input path from the QSC file
             string inputPath = Path.GetDirectoryName(resourceFile);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Input path: {inputPath}");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Input path: {inputPath}");
             string sourceFileNameWithoutExt = Path.GetFileNameWithoutExtension(resourceFile);
 
             // Run GConv to process the script
             string gconvPath = Path.Combine(QUtils.qTools, @"GConv\gconv.exe");
             string gconvDir = Path.Combine(QUtils.qTools, @"GConv");
             string gconvArgs = $"\"{resourceFile}\" -InputPath=\"{inputPath}\"";
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Running GConv: {gconvPath} {gconvArgs}");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Running GConv: {gconvPath} {gconvArgs}");
             QUtils.ShellExec($"cd {gconvDir} && {gconvPath} {gconvArgs}");
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "GConv script execution completed");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "GConv script execution completed");
             SetStatusText($"Resource {sourceFileNameWithoutExt} packed successfully.");
         }
 
@@ -5046,18 +5046,18 @@ namespace IGIEditor
             string decompileScriptPath = Path.Combine(QUtils.qTools, "decompile.qsc");
             string decompileCmd = $"ExtractResource(\"{Path.GetFileName(resourceFile)}\");";
             File.WriteAllText(decompileScriptPath, decompileCmd);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Created decompile script: {decompileCmd}");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Created decompile script: {decompileCmd}");
 
             // Run GConv to decompile the resource file
             string gconvPath = Path.Combine(QUtils.qTools, @"GConv\gconv.exe");
             string gconvArgs = $"\"{decompileScriptPath}\" -InputPath=\"{inputDirectoryPath}\" -OutputPath=\"{outputDirectoryPath}\"";
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Running GConv: {gconvPath} {gconvArgs}");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Running GConv: {gconvPath} {gconvArgs}");
             QUtils.ShellExec($"{gconvPath} {gconvArgs}");
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "GConv decompilation completed");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "GConv decompilation completed");
 
             // Delete decompile script
             File.Delete(decompileScriptPath);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Deleted decompile script: {decompileScriptPath}");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Deleted decompile script: {decompileScriptPath}");
             SetStatusText($"Resource {sourceFileNameWithoutExt} unpacked successfully.");
         }
 
@@ -5070,7 +5070,7 @@ namespace IGIEditor
             {
                 string sourcePath = openFileDialog.FileName;
                 string sourceFileNameWithoutExt = Path.GetFileNameWithoutExtension(sourcePath);
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Selected resource file: {sourcePath}");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Selected resource file: {sourcePath}");
                 UnpackResourceFile(sourcePath);
             }
         }
@@ -5150,7 +5150,7 @@ namespace IGIEditor
                 {
                     // Selecting the source image file.
                     string inputFilePath = openFileDialog.FileName;
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Selected image file: {inputFilePath}");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Selected image file: {inputFilePath}");
 
                     // Get filename and file extension
                     string filename = Path.GetFileName(inputFilePath);
@@ -5188,7 +5188,7 @@ namespace IGIEditor
                     string outputFilePath = Path.Combine(outputDirectoryPath, $"{filename}");
                     if (File.Exists(outputFilePath))
                     {
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Output PNG file: {outputFilePath}");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Output PNG file: {outputFilePath}");
                         Bitmap bitmap = new Bitmap(outputFilePath);
                         textureBox.Image = bitmap;
                         textureFileName.Text = filename;
@@ -5198,13 +5198,13 @@ namespace IGIEditor
                     }
                     else
                     {
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "No output PNG file found");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "No output PNG file found");
                     }
                 }
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -5244,7 +5244,7 @@ namespace IGIEditor
         {
             if (!QUtils.editorOnline)
             {
-                QUtils.ShowWarning("Editor is not in online mode to get missions list from server.");
+                QLog.ShowWarning("Editor is not in online mode to get missions list from server.");
                 return;
             }
 
@@ -5321,7 +5321,7 @@ namespace IGIEditor
             {
                 if (level <= 0)
                 {
-                    QUtils.AddLog("IGIEditorUI.StartLevel", $"Invalid level [{level}] received, defaulting to 1");
+                    QLog.AddLog("IGIEditorUI.StartLevel", $"Invalid level [{level}] received, defaulting to 1");
                     level = 1;
                 }
                 //Reset only if checked.
@@ -5349,7 +5349,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -5376,6 +5376,12 @@ namespace IGIEditor
                 itemDD.DataSource = null;
                 itemDD.Items.Clear();
                 itemDD.DataSource = dataSrcList;
+                //itemDD.Invoke(new Action(() => itemDD.DataSource = dataSrcList));
+                //itemDD.Invoke((MethodInvoker)delegate
+                //{
+                //    // Running on the UI thread
+                //    itemDD.DataSource = dataSrcList;
+                //});
                 itemDD.Invalidate();
                 itemDD.Update();
                 itemDD.Refresh();
@@ -5383,7 +5389,7 @@ namespace IGIEditor
                     itemDD.SelectedIndex = 0;
                 Application.DoEvents();
             }
-            catch (Exception ex) { QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex); }
+            catch (Exception ex) { QLog.LogException(MethodBase.GetCurrentMethod().Name, ex); }
         }
 
         private static void LoadImgBoxWeb(string url, PictureBox imgBox)
@@ -5403,7 +5409,7 @@ namespace IGIEditor
             {
                 if (ex.Message.Contains("The remote name could not be resolved"))
                 {
-                    QUtils.ShowError("Resource error Please check your internet connection and try Again");
+                    QLog.ShowError("Resource error Please check your internet connection and try Again");
                 }
                 else throw new Exception(ex.Message);
             }
@@ -5412,7 +5418,7 @@ namespace IGIEditor
         internal void GenerateAIScriptId(bool fromBackup = false)
         {
             QUtils.aiScriptId = QTask.GenerateTaskID(true, fromBackup);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Generated Id " + QUtils.aiScriptId + " fromBackup " + fromBackup);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Generated Id " + QUtils.aiScriptId + " fromBackup " + fromBackup);
         }
 
         private void HandleInvalidTextFmt<T>(object sender, T minCount, T maxCount, string methodName)
@@ -5448,7 +5454,7 @@ namespace IGIEditor
             {
                 itemCount = minCount;
                 ((TextBox)sender).Text = itemCount.ToString();
-                QUtils.LogException(methodName, ex);
+                QLog.LogException(methodName, ex);
             }
         }
 
@@ -5509,11 +5515,11 @@ namespace IGIEditor
             }
             catch (NullReferenceException ex)
             {
-                QUtils.ShowError("Values are null while adding object " + ex.StackTrace);
+                QLog.ShowError("Values are null while adding object " + ex.StackTrace);
             }
             catch (Exception ex)
             {
-                QUtils.ShowError(MethodBase.GetCurrentMethod().Name, ex.Message);
+                QLog.ShowError(MethodBase.GetCurrentMethod().Name, ex.Message);
             }
         }
     }

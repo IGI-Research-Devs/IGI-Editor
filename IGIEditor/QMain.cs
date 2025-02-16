@@ -27,12 +27,12 @@ namespace IGIEditor
                 }
                 else
                 {
-                    QUtils.ShowError("IGI Editor is already running");
+                    QLog.ShowError("IGI Editor is already running");
                 }
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException("EditorMain", ex);
+                QLog.ShowLogException("EditorMain", ex);
             }
         }
 

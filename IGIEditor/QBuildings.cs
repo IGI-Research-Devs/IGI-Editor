@@ -10,7 +10,7 @@ namespace IGIEditor
         internal static string AddBuilding(string model, Real64 position, bool checkModel = false, int taskId = -1, string taskNote = "")
         {
             string modelName = String.IsNullOrEmpty(taskNote) ? QObjects.FindModelName(model) : taskNote;
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called checkModel : " + checkModel.ToString() + "  Building : " + modelName + "\"\tX : " + position.x + " Y : " + position.y + " Z : " + position.z + " Model : " + model + "\n");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called checkModel : " + checkModel.ToString() + "  Building : " + modelName + "\"\tX : " + position.x + " Y : " + position.y + " Z : " + position.z + " Model : " + model + "\n");
 
             if (checkModel)
             {
@@ -18,8 +18,8 @@ namespace IGIEditor
 
                 if (!modelExist)
                 {
-                    QUtils.ShowError("Model " + model + " does not exist in current level");
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Model " + model + " does not exist in current level");
+                    QLog.ShowError("Model " + model + " does not exist in current level");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Model " + model + " does not exist in current level");
                     return null;
                 }
             }
@@ -31,7 +31,7 @@ namespace IGIEditor
         internal static string AddBuilding(string modelId, Real64 position, Real32 orientation, bool checkModel = false, int taskId = -1, string taskNote = "")
         {
             string modelName = QObjects.FindModelName(modelId);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called checkModel : " + checkModel.ToString() + "  Building : '" + modelName + "'\tX : " + position.x + " Y : " + position.y + " Z : " + position.z + "\tBeta : " + orientation.beta + " Gamma : " + orientation.gamma + ",Alpha : " + orientation.alpha + " Model : " + modelId + "\n");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called checkModel : " + checkModel.ToString() + "  Building : '" + modelName + "'\tX : " + position.x + " Y : " + position.y + " Z : " + position.z + "\tBeta : " + orientation.beta + " Gamma : " + orientation.gamma + ",Alpha : " + orientation.alpha + " Model : " + modelId + "\n");
 
             if (checkModel)
             {
@@ -39,8 +39,8 @@ namespace IGIEditor
 
                 if (!modelExist)
                 {
-                    QUtils.ShowError("Model " + modelId + " does not exist in current level");
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Model " + modelId + " does not exist in current level");
+                    QLog.ShowError("Model " + modelId + " does not exist in current level");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Model " + modelId + " does not exist in current level");
                     return null;
                 }
             }
@@ -53,7 +53,7 @@ namespace IGIEditor
             if (modelId.Contains("\"")) modelId = modelId.Replace("\"", String.Empty);
 
             string qtaskBuilding = "Task_New(" + taskId + ",\"Building\",\"" + taskNote + "\"," + x + "," + y + "," + z + "," + alpha + "," + beta + "," + gamma + ",\"" + modelId + "\");" + "\n";
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with ID : " + QUtils.qtaskObjId + "  Building : '" + QObjects.GetModelName(modelId) + "'\tX : " + x + " Y : " + y + " Z : " + z + "\t Alpha : " + alpha + " Beta : " + beta + ",Gamma : " + gamma + " Model : " + modelId + "\n");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with ID : " + QUtils.qtaskObjId + "  Building : '" + QObjects.GetModelName(modelId) + "'\tX : " + x + " Y : " + y + " Z : " + z + "\t Alpha : " + alpha + " Beta : " + beta + ",Gamma : " + gamma + " Model : " + modelId + "\n");
             return qtaskBuilding;
         }
 

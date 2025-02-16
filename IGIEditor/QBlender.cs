@@ -32,7 +32,7 @@ namespace IGIEditor
             string blendCmd = null, rotateScript = null;
             if (String.IsNullOrEmpty(blenderModel))
             {
-                QUtils.ShowError("Blender : run parameter file name is empty");
+                QLog.ShowError("Blender : run parameter file name is empty");
                 return;
             }
 
@@ -53,15 +53,15 @@ namespace IGIEditor
             else if (blendType == (int)BLENDTYPE.BLEND_FILE)
             {
                 blendCmd = runBlenderFile;
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "file cmd : " + runBlenderFile);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "file cmd : " + runBlenderFile);
             }
             else if (blendType == (int)BLENDTYPE.BLEND_SCRIPT)
             {
                 blendCmd = runBlenderScript;
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "script cmd : " + runBlenderScript);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "script cmd : " + runBlenderScript);
             }
 
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with blend type : " + (blendType == 1 ? "FILE" : "SCRIPT") + " and model  : " + blenderModel);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with blend type : " + (blendType == 1 ? "FILE" : "SCRIPT") + " and model  : " + blenderModel);
 
             if (!String.IsNullOrEmpty(blendCmd))
                 QUtils.ShellExec(blendCmd);
@@ -71,10 +71,10 @@ namespace IGIEditor
         {
             Real32 rotation = null;
             Real64 position = null;
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with data PositionExtract : " + positionExtract.ToString() + " and RotationExtract  : " + rotationExtract.ToString());
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with data PositionExtract : " + positionExtract.ToString() + " and RotationExtract  : " + rotationExtract.ToString());
 
             var blenderData = QUtils.LoadFile(blendModelsPath + blenderDataFile);
-            if (string.IsNullOrEmpty(blenderData)) QUtils.ShowError("Blender model data is empty", "Blender - Error");
+            if (string.IsNullOrEmpty(blenderData)) QLog.ShowError("Blender model data is empty", "Blender - Error");
             var blenderLine = blenderData.Replace("=", String.Empty).Split('\n');
 
             foreach (var data in blenderLine)
@@ -90,13 +90,13 @@ namespace IGIEditor
                     position.y = double.Parse(posData[1].Trim());
                     position.z = double.Parse(posData[2].Trim());
 
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "PositionExtract data : x : " + position.x.ToString() + ", y : " + position.y.ToString() + ", z : " + position.z.ToString());
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "PositionExtract data : x : " + position.x.ToString() + ", y : " + position.y.ToString() + ", z : " + position.z.ToString());
                 }
 
                 else if (data.Contains("Rotation") && rotationExtract)
                 {
                     var subStrRot = data.Slice(data.IndexOf('(') + 1, data.IndexOf(')'));
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "subStr : " + subStrRot);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "subStr : " + subStrRot);
                     var posData = subStrRot.Split(',');
                     rotation = new Real32();
 
@@ -105,7 +105,7 @@ namespace IGIEditor
                     rotation.alpha = float.Parse(posData[1].Trim().Replace("y", String.Empty));
                     rotation.gamma = float.Parse(posData[2].Trim().Replace("z", String.Empty));
 
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "RotationExtract data : x : " + rotation.alpha.ToString() + ", y : " + rotation.beta.ToString() + ", z : " + rotation.gamma.ToString());
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "RotationExtract data : x : " + rotation.alpha.ToString() + ", y : " + rotation.beta.ToString() + ", z : " + rotation.gamma.ToString());
 
                 }
             }
@@ -124,7 +124,7 @@ namespace IGIEditor
                  "obj.rotationEuler = (" + rotation.beta + "," + rotation.alpha + "," + rotation.gamma + ")";
 
             QUtils.SaveFile(blendModelsPath + QBlender.rotateCustomScript, rotateCustomScript);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "called with data model : " + blenderModel + " and rotation alpha : " + rotation.alpha + ", beta : " + rotation.beta + ", gamma : " + rotation.gamma);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "called with data model : " + blenderModel + " and rotation alpha : " + rotation.alpha + ", beta : " + rotation.beta + ", gamma : " + rotation.gamma);
 
             RunBlender((int)BLENDTYPE.BLEND_SCRIPT, blenderModel, (int)SCRIPTTYPE.SCRIPT_CUSTOM);
         }

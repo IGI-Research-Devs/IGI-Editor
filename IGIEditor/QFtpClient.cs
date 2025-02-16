@@ -117,7 +117,7 @@ namespace IGIEditor
                 ftpResponse.Close();
                 ftpRequest = null;
             }
-            catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+            catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
             return;
         }
 
@@ -144,7 +144,7 @@ namespace IGIEditor
                 ftpResponse.Close();
                 ftpRequest = null;
             }
-            catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+            catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
             return;
         }
 
@@ -169,7 +169,7 @@ namespace IGIEditor
                 ftpResponse.Close();
                 ftpRequest = null;
             }
-            catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+            catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
             return;
         }
 
@@ -198,7 +198,7 @@ namespace IGIEditor
                 string fileInfo = null;
                 /* Read the Full Response Stream */
                 try { fileInfo = ftpReader.ReadToEnd(); }
-                catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+                catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
                 /* Resource Cleanup */
                 ftpReader.Close();
                 ftpStream.Close();
@@ -207,7 +207,7 @@ namespace IGIEditor
                 /* Return File Created Date Time */
                 return fileInfo;
             }
-            catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+            catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
             /* Return an Empty string Array if an Exception Occurs */
             return "";
         }
@@ -237,7 +237,7 @@ namespace IGIEditor
                 string fileInfo = null;
                 /* Read the Full Response Stream */
                 try { while (ftpReader.Peek() != -1) { fileInfo = ftpReader.ReadToEnd(); } }
-                catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name,ex); }
+                catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name,ex); }
                 /* Resource Cleanup */
                 ftpReader.Close();
                 ftpStream.Close();
@@ -246,7 +246,7 @@ namespace IGIEditor
                 /* Return File Size */
                 return fileInfo;
             }
-            catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+            catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
             /* Return an Empty string Array if an Exception Occurs */
             return "";
         }
@@ -276,7 +276,7 @@ namespace IGIEditor
                 string directoryRaw = null;
                 /* Read Each Line of the Response and Append a Pipe to Each Line for Easy Parsing */
                 try { while (ftpReader.Peek() != -1) { directoryRaw += ftpReader.ReadLine() + "|"; } }
-                catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+                catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
                 /* Resource Cleanup */
                 ftpReader.Close();
                 ftpStream.Close();
@@ -284,9 +284,9 @@ namespace IGIEditor
                 ftpRequest = null;
                 /* Return the Directory Listing as a string Array by Parsing 'directoryRaw' with the Delimiter you Append (I use | in This Example) */
                 try { string[] directoryList = directoryRaw.Split("|".ToCharArray()); return directoryList; }
-                catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+                catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
             }
-            catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+            catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
             /* Return an Empty string Array if an Exception Occurs */
             return new string[] { "" };
         }
@@ -316,7 +316,7 @@ namespace IGIEditor
                 string directoryRaw = null;
                 /* Read Each Line of the Response and Append a Pipe to Each Line for Easy Parsing */
                 try { while (ftpReader.Peek() != -1) { directoryRaw += ftpReader.ReadLine() + "|"; } }
-                catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+                catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
                 /* Resource Cleanup */
                 ftpReader.Close();
                 ftpStream.Close();
@@ -324,9 +324,9 @@ namespace IGIEditor
                 ftpRequest = null;
                 /* Return the Directory Listing as a string Array by Parsing 'directoryRaw' with the Delimiter you Append (I use | in This Example) */
                 try { string[] directoryList = directoryRaw.Split("|".ToCharArray()); return directoryList; }
-                catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+                catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
             }
-            catch (Exception ex) { QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
+            catch (Exception ex) { QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex); }
             /* Return an Empty string Array if an Exception Occurs */
             return new string[] { "" };
         }

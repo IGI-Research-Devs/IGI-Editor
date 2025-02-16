@@ -21,18 +21,18 @@ namespace IGIEditor
         public static void EnableChecksum(bool enable)
         {
             checksumEnabled = enable;
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, 
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, 
                 $"Checksum validation {(enable ? "enabled" : "disabled")}, QChecks file: {qChecksFile}");
         }
 
         public static void RunFileIntegrityCheck(string processName = null, List<string> gameDirs = null)
         {
             try {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, 
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, 
                     $"Running integrity check. Checksum enabled: {checksumEnabled}, Process: {processName ?? "null"}");
                 
                 if (!checksumEnabled) {
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Checksum validation is disabled, skipping integrity check");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Checksum validation is disabled, skipping integrity check");
                     return;
                 }
 
@@ -51,12 +51,12 @@ namespace IGIEditor
                 {
                     if (!CheckFileIntegrity(file, false))
                     {
-                        QUtils.ShowError($"File integrity check failed for: {file}");
+                        QLog.ShowError($"File integrity check failed for: {file}");
                     }
                 }
             }
             catch (Exception ex) {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, 
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, 
                     new Exception("Failed integrity check", ex));
             }
         }
@@ -89,7 +89,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, 
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, 
                     new Exception("Failed to get files for integrity check", ex));
             }
             return files;
@@ -106,7 +106,7 @@ namespace IGIEditor
 
                 if (!File.Exists(qfilePath))
                 {
-                    if (showError) QUtils.ShowError($"File not found: {qfilePath}");
+                    if (showError) QLog.ShowError($"File not found: {qfilePath}");
                     return false;
                 }
 
@@ -131,7 +131,7 @@ namespace IGIEditor
                 {
                     if (showError)
                     {
-                        QUtils.ShowError("File integrity hashes generation error");
+                        QLog.ShowError("File integrity hashes generation error");
                     }
                     return false;
                 }
@@ -150,14 +150,14 @@ namespace IGIEditor
 
                 if (!fileMatch && showError)
                 {
-                    QUtils.ShowError($"File integrity check failed for: {filePath}");
+                    QLog.ShowError($"File integrity check failed for: {filePath}");
                 }
 
                 return fileMatch;
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, 
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, 
                     new Exception($"Failed to check integrity for file: {qfilePath}", ex));
                 return false;
             }
@@ -172,7 +172,7 @@ namespace IGIEditor
                     return true;
                 }
 
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, 
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, 
                     $"Checking directory integrity. Directories: {string.Join(", ", dirNames)}");
 
                 bool allValid = true;
@@ -180,7 +180,7 @@ namespace IGIEditor
                 {
                     if (!Directory.Exists(dir))
                     {
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Directory not found: {dir}");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Directory not found: {dir}");
                         continue;
                     }
 
@@ -200,7 +200,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, 
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, 
                     new Exception("Failed to check directory integrity", ex));
                 return false;
             }
@@ -223,7 +223,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -231,14 +231,14 @@ namespace IGIEditor
         {
             try
             {
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, 
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, 
                     $"Generating hashes for directories: {string.Join(", ", dirNames)}");
 
                 foreach (var dir in dirNames)
                 {
                     if (!Directory.Exists(dir))
                     {
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Directory not found: {dir}");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Directory not found: {dir}");
                         continue;
                     }
 
@@ -251,7 +251,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, 
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, 
                     new Exception("Failed to generate directory hashes", ex));
             }
         }
@@ -274,7 +274,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
                 return string.Empty;
             }
         }

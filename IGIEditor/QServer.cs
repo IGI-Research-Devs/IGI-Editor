@@ -79,7 +79,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException("Server" + MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException("Server" + MethodBase.GetCurrentMethod().Name, ex);
                 status = false;
             }
             return status;
@@ -97,9 +97,9 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains("File unavailable")) QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "File '" + localFile + "' was not found on server.");
+                if (ex.Message.Contains("File unavailable")) QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "File '" + localFile + "' was not found on server.");
                 else
-                    QUtils.ShowLogException("Server" + MethodBase.GetCurrentMethod().Name, ex);
+                    QLog.ShowLogException("Server" + MethodBase.GetCurrentMethod().Name, ex);
                 status = false;
             }
             return status;
@@ -116,7 +116,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException("Server" + MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException("Server" + MethodBase.GetCurrentMethod().Name, ex);
                 status = false;
             }
             return status;
@@ -173,11 +173,11 @@ namespace IGIEditor
                 {
                     if (QUtils.qServerMissionDataList.Count > 0)
                     {
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, " using cache method.");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, " using cache method.");
                         return QUtils.qServerMissionDataList;
                     }
                 }
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "using normal method.");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "using normal method.");
                 var dirList = GetDirList(missionDir, useCache, new List<string>() { QUtils.FileExtensions.Mission });
 
                 foreach (var dir in dirList)
@@ -201,14 +201,14 @@ namespace IGIEditor
                     }
                     catch (Exception ex)
                     {
-                        QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                        QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
                     }
                 }
             }
 
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
 
             QUtils.qServerMissionDataList = missionsDataList;

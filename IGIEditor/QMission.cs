@@ -26,9 +26,9 @@ namespace IGIEditor
             uint missionStaticPtr = (uint)0x006758A8;
             uint[] missionOff = { 0x1F4 };
             IntPtr missionBasePtr = QLibc.GT.GT_ReadPointerOffset(QMemory.gtGameBase, missionStaticPtr);
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, " missionBasePtr : " + missionBasePtr.ToString("X4").ToUpperInvariant());
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, " missionBasePtr : " + missionBasePtr.ToString("X4").ToUpperInvariant());
             IntPtr missionAddr = QLibc.GT.GT_ReadPointerOffsets(missionBasePtr, missionOff, (uint)(sizeof(uint) * missionOff.Length)) + 0x54;
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "missionAddr : " + missionAddr.ToString("X4").ToUpperInvariant());
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "missionAddr : " + missionAddr.ToString("X4").ToUpperInvariant());
 
             return missionAddr;
         }
@@ -36,7 +36,7 @@ namespace IGIEditor
         internal static string AddLevelFlow(string completeTask, string failedTask, float maxPlayTime, bool timerEnabled = false)
         {
             string levelFlowTask = "Task_New(10, \"LevelFlow\", \"\", 0, 0, 0, 0, 0, 0, 0,\"" + completeTask + "\",\"" + failedTask + "\"," + timerEnabled.ToString().ToUpper() + ", " + maxPlayTime + ");";
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "completeTask : " + completeTask + "\tfailedTask : " + failedTask + "\tmaxPlayTime : " + maxPlayTime + "\ttimerEnabled : " + timerEnabled.ToString());
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "completeTask : " + completeTask + "\tfailedTask : " + failedTask + "\tmaxPlayTime : " + maxPlayTime + "\ttimerEnabled : " + timerEnabled.ToString());
             return levelFlowTask;
         }
 
@@ -72,13 +72,13 @@ namespace IGIEditor
                 {
                     for (int index = 0; index < QUtils.GAME_MAX_LEVEL; ++index)
                     {
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Name Address : " + missionNameAddr.ToString("X4"));
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Desc Address : " + missionNameAddr.ToString("X4"));
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Name Address : " + missionNameAddr.ToString("X4"));
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Desc Address : " + missionNameAddr.ToString("X4"));
 
                         string mName = QLibc.GT.GT_ReadString(missionAddr1);
                         string mDesc = QLibc.GT.GT_ReadString(missionAddr2);
-                        if (name) QUtils.ShowInfo("Mission " + (index + 1).ToString() + " : " + mName);
-                        if (desc) QUtils.ShowInfo("Mission " + (index + 1).ToString() + " : " + mDesc);
+                        if (name) QLog.ShowInfo("Mission " + (index + 1).ToString() + " : " + mName);
+                        if (desc) QLog.ShowInfo("Mission " + (index + 1).ToString() + " : " + mDesc);
 
                         if (index == 13) break;
                         missionAddr1 = missionNameAddr + (int)missionNameOffsets[index];
@@ -88,7 +88,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return missionInfo;
         }
@@ -104,14 +104,14 @@ namespace IGIEditor
             var missionOldDesc = QLibc.GT.GT_ReadString(missionDescAddr);
 
             if (missionNewName.Length > missionOldName.Length || missionNewDesc.Length > missionOldDesc.Length)
-                QUtils.ShowError("Mission details length mismatch");
+                QLog.ShowError("Mission details length mismatch");
             else if (String.IsNullOrEmpty(missionNewName) || String.IsNullOrEmpty(missionNewDesc))
-                QUtils.ShowError("Mission details cannot be empty");
+                QLog.ShowError("Mission details cannot be empty");
             else
             {
                 QLibc.GT.GT_WriteMemory(missionNameAddr, "string", missionNewName);
                 QLibc.GT.GT_WriteMemory(missionDescAddr, "string", missionNewDesc);
-                //QUtils.ShowInfo("Mission details updated successfully");
+                //QLog.ShowInfo("Mission details updated successfully");
             }
         }
 

@@ -20,6 +20,8 @@ using File = System.IO.File;
 using FileIO = Microsoft.VisualBasic.FileIO;
 using FileSystem = Microsoft.VisualBasic.FileIO.FileSystem;
 using System.Runtime.InteropServices;
+using IGIEditor; // Added to reference QLog
+using static IGIEditor.QLog;
 
 namespace IGIEditor
 {
@@ -574,91 +576,6 @@ namespace IGIEditor
         }
 
 
-
-        //UI-Dialogs and MessageBox.
-        internal static void ShowWarning(string warnMsg, string caption = "WARNING")
-        {
-            DialogMsgBox.ShowBox(caption, warnMsg, MsgBoxButtons.Ok);
-        }
-
-        internal static void ShowError(string errMsg, string caption = "ERROR")
-        {
-            DialogMsgBox.ShowBox(caption, errMsg, MsgBoxButtons.Ok);
-        }
-
-        internal static void LogException(string methodName, Exception ex)
-        {
-            methodName = methodName.Replace("Btn_Click", String.Empty).Replace("_SelectedIndexChanged", String.Empty).Replace("_SelectedValueChanged", String.Empty);
-            AddLog(methodName, "Exception MESSAGE: " + ex.Message + "\nREASON: " + ex.StackTrace);
-        }
-
-        internal static void ShowException(string methodName, Exception ex)
-        {
-            ShowError("MESSAGE: " + ex.Message + "\nREASON: " + ex.StackTrace, methodName + " Exception");
-        }
-
-        internal static void ShowLogException(string methodName, Exception ex)
-        {
-            methodName = methodName.Replace("Btn_Click", String.Empty).Replace("_SelectedIndexChanged", String.Empty).Replace("_SelectedValueChanged", String.Empty);
-            //Show and Log exception for method name.
-            ShowException(methodName, ex);
-            LogException(methodName, ex);
-        }
-
-        internal static void ShowLogError(string methodName, string errMsg, string caption = "ERROR")
-        {
-            methodName = methodName.Replace("Btn_Click", String.Empty).Replace("_SelectedIndexChanged", String.Empty).Replace("_SelectedValueChanged", String.Empty);
-            //Show and Log error for method name.
-            ShowError(methodName + "(): " + errMsg, caption);
-            AddLog(methodName, errMsg);
-        }
-
-        internal static void ShowLogStatus(string methodName, string logMsg)
-        {
-            IGIEditorUI.editorRef.SetStatusText(logMsg);
-            AddLog(methodName, logMsg);
-        }
-
-        internal static void ShowLogInfo(string methodName, string logMsg)
-        {
-            ShowInfo(logMsg);
-            AddLog(methodName, logMsg);
-        }
-
-        internal static void ShowInfo(string infoMsg, string caption = "INFO")
-        {
-            DialogMsgBox.ShowBox(caption, infoMsg, MsgBoxButtons.Ok);
-        }
-
-        internal static DialogResult ShowDialog(string infoMsg, string caption = "INFO")
-        {
-            return DialogMsgBox.ShowBox(caption, infoMsg, MsgBoxButtons.YesNo);
-        }
-
-        internal static void ShowConfigError(string keyword)
-        {
-            ShowError("Config has invalid property for '" + keyword + "'", CAPTION_CONFIG_ERR);
-        }
-
-        internal static void ShowSystemFatalError(string errMsg)
-        {
-            ShowError(errMsg, CAPTION_FATAL_SYS_ERR);
-            Environment.Exit(1);
-        }
-
-        internal static bool ShowEditModeDialog()
-        {
-            var editorDlg = ShowDialog("Edit Mode not enabled to edit the level\nDo you want to enable Edit mode now ?", EDITOR_LEVEL_ERR);
-            if (editorDlg == DialogResult.Yes)
-                return true;
-            return false;
-        }
-
-        private DialogResult ShowOptionInfo(string infoMsg)
-        {
-            return DialogMsgBox.ShowBox("Edit Mode", infoMsg);
-        }
-
         internal static void SwitchEditorUI()
         {
             GT.ShowAppForeground(QUtils.editorAppName);
@@ -680,7 +597,7 @@ namespace IGIEditor
 
                 if (!String.IsNullOrEmpty(gameAbsPath) && gameAbsPath == newGameAbsPath && CheckShortcutExist())
                 {
-                    QUtils.ShowLogError("GamePathDialog", "Selected path is same as current game path\nChoose a diffrent path or try again.");
+                    QLog.ShowLogError("GamePathDialog", "Selected path is same as current game path\nChoose a diffrent path or try again.");
                     gamePathSet = shortcutCreated = shortcutExist = false;
                     return dlgResult;
                 }
@@ -743,7 +660,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return fopenIO;
         }
@@ -756,14 +673,14 @@ namespace IGIEditor
 
             if (String.IsNullOrEmpty(cfgGamePath))
             {
-                //ShowWarning("Game path could not be detected automatically! Please select game path in config file", CAPTION_CONFIG_ERR);
+                QLog.ShowWarning("Game path could not be detected automatically! Please select game path in config file", CAPTION_CONFIG_ERR);
                 gameFound = false;
             }
             else
             {
                 if (!File.Exists(gameAbsPath + Path.DirectorySeparatorChar + QMemory.gameName + ".exe"))
                 {
-                    //ShowError("Invalid path selected! Game 'IGI' not found at path '" + gameAbsPath + "'", CAPTION_FATAL_SYS_ERR);
+                    QLog.ShowError("Invalid path selected! Game 'IGI' not found at path '" + gameAbsPath + "'", CAPTION_FATAL_SYS_ERR);
                     gameFound = false;
                 }
             }
@@ -875,7 +792,7 @@ namespace IGIEditor
             {
                 if (File.Exists(internalsDllPath) && File.Exists(qLibcPath) && File.Exists(internalDllInjectorPath))
                 {
-                    AddLog(MethodBase.GetCurrentMethod().Name, "LibBin and QLibc files were found on device.");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "LibBin and QLibc files were found on device.");
                     status = true;
                 }
             }
@@ -943,7 +860,7 @@ namespace IGIEditor
             catch (Exception ex)
             {
                 status = false;
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return status;
         }
@@ -969,7 +886,7 @@ namespace IGIEditor
             catch (Exception ex)
             {
                 shortcutCreated = shortcutExist = false;
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
         }
 
@@ -1213,9 +1130,9 @@ namespace IGIEditor
             catch (Exception ex)
             {
                 if (ex.Message.Contains("remote"))
-                    ShowError("Please check your internet connection.");
+                    QLog.ShowError("Please check your internet connection.");
                 else
-                    ShowError(ex.Message, "WebReader Error");
+                    QLog.ShowError(ex.Message, "WebReader Error");
             }
             return strContent;
         }
@@ -1234,10 +1151,10 @@ namespace IGIEditor
             {
                 if (ex.Message.Contains("The remote name could not be resolved"))
                 {
-                    ShowError("Resource error Please check your internet connection and try Again");
+                    QLog.ShowError("Resource error Please check your internet connection and try Again");
                 }
                 else
-                    ShowError(ex.Message ?? ex.StackTrace);
+                    QLog.ShowError(ex.Message ?? ex.StackTrace);
             }
         }
 
@@ -1354,7 +1271,7 @@ namespace IGIEditor
             {
                 if (gGameLevel <= 0)
                 {
-                    AddLog("QUtils.ResetCurrentLevel", $"Invalid gGameLevel [{gGameLevel}] detected, defaulting to 1");
+                    QLog.AddLog("QUtils.ResetCurrentLevel", $"Invalid gGameLevel [{gGameLevel}] detected, defaulting to 1", DEBUG_TYPE.Error);
                     gGameLevel = 1;
                 }
                 int level = QMemory.GetRunningLevel();
@@ -1448,7 +1365,7 @@ namespace IGIEditor
         {
             try
             {
-                AddLog(MethodBase.GetCurrentMethod().Name, "Called with File '" + updateFile + "'" + " action: " + updateAction.ToString() + " Batch File: " + updateBatch);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Called with File '" + updateFile + "'" + " action: " + updateAction.ToString() + " Batch File: " + updateBatch);
                 ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Updating application please wait...");
                 string updateUrl = QServer.serverBaseURL + QServer.updateDir;
                 string localFileName = cachePath + "\\" + (String.IsNullOrEmpty(updateFile) ? editorUpdaterDir : updateFile) + QUtils.FileExtensions.Zip;
@@ -1466,9 +1383,9 @@ namespace IGIEditor
                     && (updateAction == UPDATE_ACTION.EXTRACT || updateAction == UPDATE_ACTION.UPDATE))
                 {
                     ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Updater file found please wait...");
-                    AddLog(MethodBase.GetCurrentMethod().Name, "Extracting: '" + localUpdateFile + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Extracting: '" + localUpdateFile + "'");
                     status = QZip.Extract(localUpdateFile, cachePath);
-                    AddLog(MethodBase.GetCurrentMethod().Name, "Extracting of file '" + updateFile + "' done");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Extracting of file '" + updateFile + "' done");
                 }
 
                 //Download the updater if not found.
@@ -1481,13 +1398,13 @@ namespace IGIEditor
                     {
                         ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Updater cleaning previous files...");
                         if (Directory.Exists(localUpdatePath)) DirectoryDelete(localUpdatePath);
-                        AddLog(MethodBase.GetCurrentMethod().Name, "Updater cleaning previous files for Action: " + updateAction.ToString());
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Updater cleaning previous files for Action: " + updateAction.ToString());
                     }
 
                     //Update from backup on Update.
                     if (updateAction == UPDATE_ACTION.UPDATE)
                     {
-                        AddLog(MethodBase.GetCurrentMethod().Name, "Updating from backup file.");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Updating from backup file.");
                         if (File.Exists(localUpdateFile))
                         {
                             var dlgMsg = ShowDialog("Editor found updater file already exist from previous version\nDo you want to delete it and continue with new installation ?");
@@ -1499,10 +1416,10 @@ namespace IGIEditor
                             else
                             {
                                 ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Updater file found please wait...");
-                                AddLog(MethodBase.GetCurrentMethod().Name, "Extracting: backup file '" + localUpdateFile + "'");
+                                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Extracting: backup file '" + localUpdateFile + "'");
                                 status = QZip.Extract(localUpdateFile, cachePath);
                                 newInstallation = false;
-                                AddLog(MethodBase.GetCurrentMethod().Name, "Extracting from backup file done.");
+                                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Extracting from backup file done.");
                             }
                         }
                     }
@@ -1514,24 +1431,24 @@ namespace IGIEditor
                         string updateNamePath = localFileName;
                         string updateUrlPath = "/" + QServer.updateDir + "/" + updateName + QUtils.FileExtensions.Zip;
 
-                        AddLog(MethodBase.GetCurrentMethod().Name, "Downloading new updater file '" + updateNamePath + "'");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Downloading new updater file '" + updateNamePath + "'");
                         ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Downloading new update please wait...");
-                        AddLog(MethodBase.GetCurrentMethod().Name, "Url: '" + updateUrl + "' file '" + updateNamePath + "'");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Url: '" + updateUrl + "' file '" + updateNamePath + "'");
                         status = QServer.Download(updateUrlPath, updateNamePath, cachePath);
 
-                        AddLog(MethodBase.GetCurrentMethod().Name, "Downloaded new updater file '" + updateNamePath + "'");
-                        //Download and extract to Cachee.
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Downloaded new updater file '" + updateNamePath + "'");
+                        //Download and extract to Cache.
                         if (updateAction == UPDATE_ACTION.EXTRACT || updateAction == UPDATE_ACTION.UPDATE)
                         {
                             if (status) status = QZip.Extract(updateNamePath, cachePath);
                             if (status)
-                                AddLog(MethodBase.GetCurrentMethod().Name, "Extracting updater file '" + updateNamePath + "' done.");
+                                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Extracting updater file '" + updateNamePath + "' done.");
                         }
                     }
                 }
 
                 //updateFile = cachePath + "\\" + updateFile;
-                AddLog(MethodBase.GetCurrentMethod().Name, "Updater: UpdaterFile '" + updateFile + "' exist: " + Directory.Exists(updateFile).ToString());
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Updater: UpdaterFile '" + updateFile + "' exist: " + Directory.Exists(updateFile).ToString());
                 //Start updating the editor files.
                 if (Directory.Exists(localUpdatePath) && updateAction == UPDATE_ACTION.UPDATE)
                 {
@@ -1546,7 +1463,7 @@ namespace IGIEditor
                       (QUtils.nppInstalled ? "notepad++ - nosession - notabbar - alwaysOnTop - multiInst - lhaskell \"" : "notepad \"") + editorCurrPath + "\\" + editorChangeLogs + QUtils.FileExtensions.Text + "\"\n";
 
                     File.WriteAllText(updaterBatchFile, batchUpdaterData);
-                    AddLog(MethodBase.GetCurrentMethod().Name, "Updating batch file '" + updateBatch + "' created");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Updating batch file '" + updateBatch + "' created");
 
                     ShowWarning("Updating the editor please wait.\nEditor will now restart to update to the newest version available.");
 
@@ -1554,22 +1471,22 @@ namespace IGIEditor
                     DetachInternals();
                     Sleep(2.5f);
 
-                    AddLog(MethodBase.GetCurrentMethod().Name, "Updating Internals detached");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Updating Internals detached");
 
                     //If update contains bin - Injector/Natives data as well.
                     if (Directory.Exists(localUpdatePath + "\\" + "bin"))
                     {
                         DirectoryIOCopy(localUpdatePath + "\\" + "bin", editorCurrPath + "\\" + "bin");
-                        AddLog(MethodBase.GetCurrentMethod().Name, "Updating 'bin' directory done.");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Updating 'bin' directory done.");
                     }
 
                     //Move Readme,Changelogs.
                     if (File.Exists(localReadmePath)) QUtils.FileIOMove(localReadmePath, editorReadmePath);
                     if (File.Exists(localChangelogsPath)) QUtils.FileIOMove(localChangelogsPath, editorChangelogsPath);
 
-                    AddLog(MethodBase.GetCurrentMethod().Name, "Updating Executing batch shell command");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Updating Executing batch shell command");
                     ShellExec(updaterBatchFile, true, false);
-                    AddLog(MethodBase.GetCurrentMethod().Name, "Updating Executing batch shell command done.");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Updating Executing batch shell command done.");
                     ShowLogStatus(MethodBase.GetCurrentMethod().Name, "Editor was updated successfully.");
                     Application.Exit();//Exit the application to update.
                 }
@@ -1754,7 +1671,7 @@ namespace IGIEditor
 #if DEV_MODE
             return true;
 #endif
-            AddLog(MethodBase.GetCurrentMethod().Name, "Path : " + internalsDllPath);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Path : " + internalsDllPath);
 
 #if DEBUG
             internalsDllFile = Path.GetFileNameWithoutExtension(internalsDll) + "-Dbg" + QUtils.FileExtensions.Dll;
@@ -1770,7 +1687,7 @@ namespace IGIEditor
             //Injector - 1st Method.
             string internalsCmd = internalDllInjectorPath + " -i " + internalsDllFile;
             string shellOut = ShellExec(internalsCmd, true);
-            AddLog(MethodBase.GetCurrentMethod().Name, "Using first method.");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Using first method.");
 
             Sleep(1.5f);
             var internalsAttached = CheckInternalsAttached();
@@ -1778,7 +1695,7 @@ namespace IGIEditor
             //Injector - 2nd Method.
             if (!internalsAttached)
             {
-                AddLog(MethodBase.GetCurrentMethod().Name, "Using second method.");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Using second method.");
                 internalsCmd = internalDllGTInjectorPath + " " + internalsDllFile;
 
                 Sleep(1.5f);
@@ -1792,7 +1709,7 @@ namespace IGIEditor
             }
 
             if (shellOut.Contains("Error")) attachStatus = false; else attachStatus = true;
-            AddLog(MethodBase.GetCurrentMethod().Name, "cmd: " + internalsCmd + " status: " + attachStatus);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "cmd: " + internalsCmd + " status: " + attachStatus);
             return attachStatus;
         }
 
@@ -1813,7 +1730,7 @@ namespace IGIEditor
                 string shellOut = ShellExec(dllShellCmd, true);
 
                 if (shellOut.Contains("Error")) attachStatus = false; else attachStatus = true;
-                AddLog(MethodBase.GetCurrentMethod().Name, "DetachInternals() cmd: " + dllShellCmd + " status: " + attachStatus);
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "DetachInternals() cmd: " + dllShellCmd + " status: " + attachStatus);
             }
             catch (Exception) { return false; }
             return attachStatus;
@@ -1909,7 +1826,7 @@ namespace IGIEditor
                 }
                 catch (Exception ex)
                 {
-                    QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                    QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
                 }
             }
         }
@@ -1933,7 +1850,7 @@ namespace IGIEditor
         internal static void CleanUpTmpFiles()
         {
             // Cleaning up directories
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "Cleaning up temp directories");
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "Cleaning up temp directories");
             string[] dconvFiles = Directory.GetFiles(Path.Combine(QUtils.qTools, @"DConv\input")).Concat(Directory.GetFiles(Path.Combine(QUtils.qTools, @"DConv\output"))).ToArray();
             string[] tgaConvFiles = Directory.GetFiles(Path.Combine(QUtils.qTools, @"TGAConv")).ToArray();
             foreach (string file in dconvFiles.Concat(tgaConvFiles))
@@ -1942,11 +1859,11 @@ namespace IGIEditor
                 {
                     if (file.Contains(".exe")) continue; // Skip the TGAConv file.
                     File.Delete(file);
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, $"Removed file: {file} successfully.");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, $"Removed file: {file} successfully.");
                 }
                 catch (Exception ex)
                 {
-                    QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                    QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
                 }
             }
         }

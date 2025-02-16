@@ -46,7 +46,7 @@ namespace IGIEditor
             bool exist = Directory.Exists(qCompilerPath);
             if (!exist)
             {
-                QUtils.ShowError("QCompiler external tool not found in system\nSwitching to Internal Compiler.", "Compiler Error.");
+                QLog.ShowError("QCompiler external tool not found in system\nSwitching to Internal Compiler.", "Compiler Error.");
                 return false;
             }
             return true;
@@ -121,14 +121,14 @@ namespace IGIEditor
             bool status = false;
             QUtils.currGameLevel = QMemory.GetRunningLevel();
             string currLevelPath = "level" + QUtils.currGameLevel;
-            QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "QFile: '" + qscFile + "' Game Path: '" + gamePath + "'" + " CurrLevel path: " + currLevelPath);
+            QLog.AddLog(MethodBase.GetCurrentMethod().Name, "QFile: '" + qscFile + "' Game Path: '" + gamePath + "'" + " CurrLevel path: " + currLevelPath);
 
             if (File.Exists(qscFile))
             {
                 string scriptFile = "";
                 string outScriptPath = gamePath + Path.DirectorySeparatorChar + qscFile;
                 string scriptWeaponFile = "LOCAL:weapons/weaponconfig.qsc";
-                QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "QFile : Output path '" + outScriptPath + "'");
+                QLog.AddLog(MethodBase.GetCurrentMethod().Name, "QFile : Output path '" + outScriptPath + "'");
 
                 var qscData = QUtils.LoadFile(qscFile);
 
@@ -147,24 +147,24 @@ namespace IGIEditor
 
                     if (File.Exists(outScriptPath))
                     {
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "QFile : File exist '" + outScriptPath + "' deleting file.");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "QFile : File exist '" + outScriptPath + "' deleting file.");
                         QUtils.FileIODelete(outScriptPath);
                     }
 
                     //Copy file to OutPath and Compile with Internal Compiler.
                     QUtils.FileCopy(qscFile, outScriptPath);
 
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "QFile : Starting Compiling of file '" + scriptFile + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "QFile : Starting Compiling of file '" + scriptFile + "'");
                     QInternals.ScriptCompile(scriptFile);
                     status = true;
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "QFile : Compiling of file '" + scriptFile + "' done\tOutput Script Path: '" + outScriptPath + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "QFile : Compiling of file '" + scriptFile + "' done\tOutput Script Path: '" + outScriptPath + "'");
 
 
                     if (status) IGIEditorUI.editorRef.SetStatusText("Compile success");
                 }
-                else QUtils.ShowError("Compile error data is empty.", "COMPILE ERROR");
+                else QLog.ShowError("Compile error data is empty.", "COMPILE ERROR");
             }
-            else QUtils.ShowError("Compile error file not found.", "COMPILE ERROR");
+            else QLog.ShowError("Compile error file not found.", "COMPILE ERROR");
             return status;
         }
 
@@ -178,11 +178,11 @@ namespace IGIEditor
                 if (!String.IsNullOrEmpty(qscData))
                 {
                     string scriptFile = "MISSION:objects.qsc";
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "QData : Script File :'" + scriptFile + "' Game Path: '" + gamePath + ",CurrLevel path: " + currLevelPath + "',Append Data: " + appendData + ",Restart Level: " + restartLevel + ",Save Position: " + savePos);
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "QData : Script File :'" + scriptFile + "' Game Path: '" + gamePath + ",CurrLevel path: " + currLevelPath + "',Append Data: " + appendData + ",Restart Level: " + restartLevel + ",Save Position: " + savePos);
 
                     if (!gamePath.Contains(currLevelPath))
                     {
-                        QUtils.ShowLogError(MethodBase.GetCurrentMethod().Name, "Compile error in game path for level #" + QUtils.currGameLevel);
+                        QLog.ShowLogError(MethodBase.GetCurrentMethod().Name, "Compile error in game path for level #" + QUtils.currGameLevel);
                         return false;
                     }
 
@@ -190,25 +190,25 @@ namespace IGIEditor
                     QUtils.SaveFile(qscData, appendData);
                     QUtils.gamePath = QUtils.cfgGamePath + QMemory.GetRunningLevel();
                     string outScriptPath = QUtils.gamePath + Path.DirectorySeparatorChar + QUtils.objectsQsc;
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "QData : Output Path: '" + outScriptPath + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "QData : Output Path: '" + outScriptPath + "'");
 
                     if (File.Exists(outScriptPath))
                     {
-                        QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "QData : File exist '" + outScriptPath + "' deleting file.");
+                        QLog.AddLog(MethodBase.GetCurrentMethod().Name, "QData : File exist '" + outScriptPath + "' deleting file.");
                         QUtils.FileIODelete(outScriptPath);
                     }
 
                     //Copy file to OutPath and Compile with Internal Compiler.
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "QData : Starting Compiling of file '" + QUtils.objectsQsc + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "QData : Starting Compiling of file '" + QUtils.objectsQsc + "'");
                     QUtils.FileCopy(QUtils.objectsQsc, outScriptPath);
                     QInternals.ScriptCompile(scriptFile);
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "QData : Compiling of file '" + scriptFile + "' done\tOutput Path: '" + outScriptPath + "'");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "QData : Compiling of file '" + scriptFile + "' done\tOutput Path: '" + outScriptPath + "'");
 
                     QUtils.Sleep(1.5f);
                     //Delete script file after compiling.
                     QUtils.FileIODelete(outScriptPath);
 
-                    QUtils.AddLog(MethodBase.GetCurrentMethod().Name, "QData : Output Path: '" + outScriptPath + "' removed");
+                    QLog.AddLog(MethodBase.GetCurrentMethod().Name, "QData : Output Path: '" + outScriptPath + "' removed");
 
                     if (restartLevel) QMemory.RestartLevel(savePos);
                     status = true;
@@ -216,7 +216,7 @@ namespace IGIEditor
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
                 status = false;
             }
             return status;
@@ -233,14 +233,14 @@ namespace IGIEditor
                 {
                     var qcompiler = GetQCompiler();
                     if (qcompiler is null)
-                        QUtils.ShowError(QUtils.EXTERNAL_COMPILER_ERR);
+                        QLog.ShowError(QUtils.EXTERNAL_COMPILER_ERR);
                    else 
                         status = qcompiler.QCompile(new List<string>() { qscFile }, qscPath);
                 }
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return status;
         }
@@ -255,7 +255,7 @@ namespace IGIEditor
                     QUtils.SaveFile(qscData, appendData);
                     var qcompiler = GetQCompiler();
                     if (qcompiler is null)
-                        QUtils.ShowError(QUtils.EXTERNAL_COMPILER_ERR);
+                        QLog.ShowError(QUtils.EXTERNAL_COMPILER_ERR);
                     else
                         status = qcompiler.QCompile(new List<string>() { QUtils.objectsQsc }, gamePath);
 
@@ -266,7 +266,7 @@ namespace IGIEditor
 
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return status;
         }
@@ -280,7 +280,7 @@ namespace IGIEditor
                 status = QCopy(qscFiles, QTYPE.COMPILE);
 
                 if (!status)
-                    QUtils.ShowError("Error occurred while copying files");
+                    QLog.ShowError("Error occurred while copying files");
 
                 //Change directory to compile directory.
                 QSetPath(compilePath);
@@ -289,7 +289,7 @@ namespace IGIEditor
                 string shellOut = QUtils.ShellExec(compileStart);
                 if (shellOut.Contains("Error") || shellOut.Contains("importModule") || shellOut.Contains("ModuleNotFoundError") || shellOut.Contains("Converted: 0"))
                 {
-                    QUtils.ShowError("Error in compiling input files");
+                    QLog.ShowError("Error in compiling input files");
                     QSetPath(QUtils.editorCurrPath);
                     return false;
                 }
@@ -299,17 +299,17 @@ namespace IGIEditor
                 {
                     bool moveStatus = XMove("output", outputPath, QTYPE.COMPILE);
                     if (!moveStatus)
-                        QUtils.ShowError("Error while moving data to Output path");
+                        QLog.ShowError("Error while moving data to Output path");
                 }
                 else
                 {
-                    QUtils.ShowError("Path '" + currDir + "' does not exist!");
+                    QLog.ShowError("Path '" + currDir + "' does not exist!");
                 }
 
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             Directory.SetCurrentDirectory(qappPath);
             return status;
@@ -346,14 +346,14 @@ namespace IGIEditor
                 {
                     var qcompiler = GetQCompiler();
                     if (qcompiler is null)
-                        QUtils.ShowError(QUtils.EXTERNAL_COMPILER_ERR);
+                        QLog.ShowError(QUtils.EXTERNAL_COMPILER_ERR);
                     else
                         status = qcompiler.QDecompile(new List<string>() { qvmFile }, qvmPath);
                 }
             }
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return status;
         }
@@ -368,7 +368,7 @@ namespace IGIEditor
                     QUtils.SaveFile(qvmFile, appendData);
                     var qcompiler = GetQCompiler();
                     if (qcompiler is null)
-                        QUtils.ShowError(QUtils.EXTERNAL_COMPILER_ERR);
+                        QLog.ShowError(QUtils.EXTERNAL_COMPILER_ERR);
                     else
                         status = qcompiler.QDecompile(new List<string>() { QUtils.objectsQvm }, gamePath);
                 }
@@ -376,7 +376,7 @@ namespace IGIEditor
 
             catch (Exception ex)
             {
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.LogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             return status;
         }
@@ -401,7 +401,7 @@ namespace IGIEditor
                 status = QCopy(qvmFiles, QTYPE.DECOMPILE);
 
                 if (!status)
-                    QUtils.ShowError("Error occurred while copying files");
+                    QLog.ShowError("Error occurred while copying files");
 
                 //Change directory to compile directory.
                 QSetPath(decompilePath);
@@ -410,7 +410,7 @@ namespace IGIEditor
                 string shellOut = QUtils.ShellExec(decompileStart);
                 if (shellOut.Contains("Error") || shellOut.Contains("importModule") || shellOut.Contains("ModuleNotFoundError") || shellOut.Contains("Converted: 0"))
                 {
-                    QUtils.ShowError("Error in decompiling input files");
+                    QLog.ShowError("Error in decompiling input files");
                     return false;
                 }
 
@@ -419,17 +419,17 @@ namespace IGIEditor
                 {
                     bool moveStatus = XMove("output", outputPath, QTYPE.DECOMPILE);
                     if (!moveStatus)
-                        QUtils.ShowError("Error while moving data to Output path");
+                        QLog.ShowError("Error while moving data to Output path");
                 }
                 else
                 {
-                    QUtils.ShowError("Path '" + currDir + "' does not exist!");
+                    QLog.ShowError("Path '" + currDir + "' does not exist!");
                 }
 
             }
             catch (Exception ex)
             {
-                QUtils.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
+                QLog.ShowLogException(MethodBase.GetCurrentMethod().Name, ex);
             }
             Directory.SetCurrentDirectory(qappPath);
             return status;
