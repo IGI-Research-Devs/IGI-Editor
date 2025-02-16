@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Top-level properties -->
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{1BBBB5FC-3CF7-46C3-8837-9DBEE8BBD41F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>IGIEditor</RootNamespace>
@@ -28,7 +28,21 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>true</Prefer32Bit>
+    <!-- Add both the plural and singular RuntimeIdentifier properties here -->
+    <RuntimeIdentifiers>win-x86</RuntimeIdentifiers>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
   </PropertyGroup>
+
+  <!-- Import common targets -->
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" 
+          Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+
+  <PropertyGroup>
+    <ApplicationIcon>app_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +55,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
@@ -52,9 +67,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>IGIEditor\app_icon.ico</ApplicationIcon>
-  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Debug\</OutputPath>
@@ -64,18 +77,23 @@
     <Prefer32Bit>false</Prefer32Bit>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Release\</OutputPath>
     <DefineConstants>WIN32</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
+    <Prefer32Bit>true</Prefer32Bit>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup />
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Dev|AnyCPU' ">
     <OutputPath>bin\Testing\</OutputPath>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Dev|x86' ">
     <OutputPath>bin\x86\Dev\</OutputPath>
     <DefineConstants>DEV_MODE,WIN32</DefineConstants>
@@ -83,15 +101,18 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
+
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'External|AnyCPU'">
     <OutputPath>bin\External\</OutputPath>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'External|x86'">
     <OutputPath>bin\x86\External\</OutputPath>
     <DefineConstants>EXTERNAL,WIN32</DefineConstants>
@@ -100,6 +121,7 @@
     <LangVersion>7.3</LangVersion>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DevMode|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\DevMode\</OutputPath>
@@ -110,6 +132,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DevMode|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\DevMode\</OutputPath>
@@ -120,14 +143,12 @@
     <LangVersion>7.3</LangVersion>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Interop.IWshRuntimeLibrary">
-      <HintPath>IGIEditor\Interop.IWshRuntimeLibrary.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>../packages/Newtonsoft.Json.13.0.1/lib/net45/Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -143,53 +164,17 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="IGIEditor\DialogMsgBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="IGIEditor\DialogMsgBox.Designer.cs">
-      <DependentUpon>DialogMsgBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DynamicJson.cs" />
-    <Compile Include="IGIEditor\AutomateLib.cs" />
-    <Compile Include="IGIEditor\QAI.cs" />
-    <Compile Include="IGIEditor\QBlender.cs" />
-    <Compile Include="IGIEditor\QBuildings.cs" />
-    <Compile Include="IGIEditor\QCompiler.cs" />
-    <Compile Include="IGIEditor\QCryptor.cs" />
-    <Compile Include="IGIEditor\QGraphs.cs" />
-    <Compile Include="IGIEditor\QHuman.cs" />
-    <Compile Include="IGIEditor\QLibc.cs" />
-    <Compile Include="IGIEditor\QMemory.cs" />
-    <Compile Include="IGIEditor\QMisc.cs" />
-    <Compile Include="IGIEditor\QMission.cs" />
-    <Compile Include="IGIEditor\QObjects.cs" />
-    <Compile Include="IGIEditor\QSerialize.cs" />
-    <Compile Include="IGIEditor\QSerializeLib.cs" />
-    <Compile Include="IGIEditor\QUtils.cs" />
-    <Compile Include="IGIEditor\QWeapon.cs" />
-    <Compile Include="IGIEditor\QZip.cs" />
-    <Compile Include="IGIEditor\QZipStorer.cs" />
-    <Compile Include="IGIEditor\UXLib.cs" />
-    <Compile Include="IGIEditor\IGIEditorUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="IGIEditor\IGIEditorUI.Designer.cs">
-      <DependentUpon>IGIEditorUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="IGIEditor\QMain.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IGIEditor\QFileInegrity.cs" />
-    <Compile Include="IGIEditor\QIniParser.cs" />
-    <Compile Include="IGIEditor\QUserInfo.cs" />
-    <Compile Include="IGIEditor\QFtpClient.cs" />
-    <Compile Include="QInternals.cs" />
-    <Compile Include="QServer.cs" />
-    <Compile Include="QTask.cs" />
-    <EmbeddedResource Include="IGIEditor\DialogMsgBox.resx">
+    <Compile Include="*.cs" />
+    <Compile Include="Properties\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="DialogMsgBox.resx">
       <DependentUpon>DialogMsgBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="IGIEditor\IGIEditorUI.resx">
+    <EmbeddedResource Include="IGIEditorUI.resx">
       <DependentUpon>IGIEditorUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -197,11 +182,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="IGIEditor\packages.config" />
@@ -210,19 +193,17 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
   </ItemGroup>
+
   <ItemGroup>
     <None Include="IGIEditor\App.config" />
   </ItemGroup>
+
   <ItemGroup>
     <Content Include="IGIEditor\app_icon.ico" />
     <Content Include="IGIEditor\Icon4.ico" />
   </ItemGroup>
+
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>
@@ -235,5 +216,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

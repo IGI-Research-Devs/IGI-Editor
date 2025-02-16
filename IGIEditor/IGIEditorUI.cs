@@ -15,6 +15,7 @@ using System.Web;
 using System.Windows.Forms;
 using UXLib.UX;
 using static IGIEditor.QUtils;
+using static IGIEditor.QServer;
 using static System.Drawing.Color;
 using static System.Drawing.FontStyle;
 using Timer = System.Windows.Forms.Timer;
@@ -39,7 +40,7 @@ namespace IGIEditor
         private static FOpenIO fopenIO;
         private string[] texFiles;
         private int texIndex = 0;
-        private string textureSelectedPath = null;
+        private string textureSelectedPath = null; // Remove ! suffix since nullable not supported
         #endregion
 
         #region timers
@@ -56,7 +57,7 @@ namespace IGIEditor
             try
             {
                 var updatePositionTimer = new Timer();
-                var fileIntegrityCheckerTimer = new Timer();
+                // var fileIntegrityCheckerTimer = new Timer();
 
                 InitializeComponent();
                 UXWorker formMover = new UXWorker();
@@ -225,7 +226,7 @@ namespace IGIEditor
 #else
                     if (enable)
                     {
-                        fileIntegrityCheckerTimer.Start();
+                        // fileIntegrityCheckerTimer.Start();
                         updatePositionTimer.Start();
                         if (QUtils.gameRefresh)
                         {

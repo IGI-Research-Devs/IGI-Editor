@@ -1,4 +1,5 @@
-﻿using IWshRuntimeLibrary;
+﻿// Remove the IWshRuntimeLibrary using directive
+// using IWshRuntimeLibrary;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using QLibc;
@@ -15,10 +16,12 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+// Use the fully qualified name for QServer
 using static IGIEditor.QServer;
 using File = System.IO.File;
 using FileIO = Microsoft.VisualBasic.FileIO;
 using FileSystem = Microsoft.VisualBasic.FileIO.FileSystem;
+using System.Runtime.InteropServices; // Add this for shortcut creation
 
 namespace IGIEditor
 {
@@ -146,7 +149,7 @@ namespace IGIEditor
 
         #region App Version
         internal static string versionFileName = "VERSION";
-        internal static string appEditorSubVersion = "0.8.5.0";
+        internal static string appEditorSubVersion = "0.8.5.1";
         internal static float viewPortDelta = 10000.0f;
         #endregion
 
@@ -946,44 +949,68 @@ namespace IGIEditor
             return status;
         }
 
-        private static void CreateGameShortcut(string linkName, string pathToApp, string gameArgs = "")
+        internal static bool CreateGameShortcut()
         {
+            // New shortcut creation logic
             try
             {
-                var shell = new WshShell();
-                string shortcutAddress = Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + linkName + ".lnk";
+                string shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), QMemory.gameName + "_full.lnk");
+                string targetPath = Path.Combine(gameAbsPath, QMemory.gameName + ".exe");
 
-                FileIODelete(shortcutAddress);
+                if (!File.Exists(targetPath))
+                {
+                    ShowError("Game executable not found: " + targetPath);
+                    return false;
+                }
 
-                var shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-                shortcut.Description = "Shortcut for IGI";
-                shortcut.Hotkey = "Ctrl+ALT+I";
-                shortcut.Arguments = gameArgs;
-                shortcut.WorkingDirectory = pathToApp;
-                shortcut.TargetPath = pathToApp + Path.DirectorySeparatorChar + "igi.exe";
-                shortcut.Save();
-                shortcutCreated = shortcutExist = true;
+                // Create the shortcut using System.Runtime.InteropServices
+                IShellLinkW newShortcut = (IShellLinkW)Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("00021401-0000-0000-C000-000000000046")));
+                newShortcut.SetPath(targetPath);
+                newShortcut.SetDescription("IGI Editor Game Shortcut");
+                IPersistFileW persistFile = (IPersistFileW)newShortcut;
+                persistFile.Save(shortcutPath, false);
+
+                return true;
             }
             catch (Exception ex)
             {
-                shortcutCreated = shortcutExist = false;
-                QUtils.LogException(MethodBase.GetCurrentMethod().Name, ex);
+                ShowException("CreateGameShortcut", ex);
+                return false;
             }
         }
 
-        internal static bool CreateGameShortcut()
+        // COM interfaces for shortcut creation
+        [ComImport, Guid("00021401-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        interface IShellLinkW
         {
-            shortcutExist = shortcutCreated = false;
-            if (!File.Exists(QMemory.gameName + "_full.lnk") || !File.Exists(QMemory.gameName + "_full.lnk"))
-            {
-                if (gameAbsPath.Contains("\""))
-                    gameAbsPath = gameAbsPath.Replace("\"", String.Empty);
-                CreateGameShortcut(QMemory.gameName + "_full", gameAbsPath);
-                CreateGameShortcut(QMemory.gameName + "_window", gameAbsPath, "window");
-            }
-            return shortcutCreated;
+            void GetPath([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile, int cchMaxPath, IntPtr pfd, int fFlags);
+            void GetIDList(out IntPtr ppidl);
+            void SetIDList(IntPtr pidl);
+            void GetDescription([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszName, int cchMaxName);
+            void SetDescription([MarshalAs(UnmanagedType.LPWStr)] string pszName);
+            void GetWorkingDirectory([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszDir, int cchMaxPath);
+            void SetWorkingDirectory([MarshalAs(UnmanagedType.LPWStr)] string pszDir);
+            void GetShowCmd(out int piShowCmd);
+            void SetShowCmd(int iShowCmd);
+            void GetHotKey(out short pwHotkey);
+            void SetHotKey(short wHotkey);
+            void GetIconLocation([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszIconPath, int cchIconPath, out int piIconIndex);
+            void SetIconLocation([MarshalAs(UnmanagedType.LPWStr)] string pszIconPath, int iIconIndex);
+            void SetRelativePath([MarshalAs(UnmanagedType.LPWStr)] string pszPath, int dwReserved);
+            void Resolve(IntPtr hwnd, int fFlags);
+            void SetPath([MarshalAs(UnmanagedType.LPWStr)] string pszFile);
         }
 
+        [ComImport, Guid("0000010c-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        interface IPersistFileW
+        {
+            void GetClassID(out Guid pClassID);
+            void IsDirty();
+            void Load([MarshalAs(UnmanagedType.LPWStr)] string pszFileName, int dwMode);
+            void Save([MarshalAs(UnmanagedType.LPWStr)] string pszFileName, [MarshalAs(UnmanagedType.Bool)] bool fRemember);
+            void SaveCompleted([MarshalAs(UnmanagedType.LPWStr)] string pszFileName);
+            void GetCurFile([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFileName);
+        }
 
         //File Operation Utilities C# Version.
         internal static void FileMove(string sourcePath, string destPath)
